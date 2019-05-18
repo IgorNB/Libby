@@ -1,0 +1,126 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0003-book-test-data
+      author: igornb
+      context: test
+      runOnChange: true
+      loadUpdateData:
+        primaryKey: id
+        columns:
+          - column:
+              name: version
+              value: 0
+          - column:
+              header: work_id
+              type: "skip"
+          - column:
+              header: best_book_id
+              type: "skip"
+          - column:
+              header: book_id
+              name: id
+              type: "string"
+          - column:
+              header: id
+              name: work_id
+              type: "string"
+
+          - column:
+              header: books_count
+              type: "skip"
+
+          - column:
+              header: isbn
+              name: isbn
+              type: "string"
+
+          - column:
+              header: isbn13
+              type: "numeric"
+
+          - column:
+              header: authors
+              name: authors
+              type: "string"
+
+          - column:
+              header: original_publication_year
+              name: original_publication_year
+              type: "numeric"
+
+          - column:
+              header: original_title
+              name: original_title
+              type: "string"
+
+          - column:
+              header: title
+              name: title
+              type: "string"
+
+
+
+          - column:
+              header: language_code
+              name: lang_id
+              type: "string"
+
+          - column:
+              header: average_rating
+              name: average_rating
+              type: "numeric"
+
+          - column:
+              header: ratings_count
+              name: ratings_count
+              type: "numeric"
+
+          - column:
+              header: work_ratings_count
+              type: "skip"
+
+          - column:
+              header: work_text_reviews_count
+              type: "skip"
+
+          - column:
+              header: ratings_1
+              name: ratings_1
+              type: "numeric"
+
+          - column:
+              header: ratings_2
+              name: ratings_2
+              type: "numeric"
+
+          - column:
+              header: ratings_3
+              name: ratings_3
+              type: "numeric"
+
+          - column:
+              header: ratings_4
+              name: ratings_4
+              type: "numeric"
+
+          - column:
+              header: ratings_5
+              name: ratings_5
+              type: "numeric"
+
+          - column:
+              header: image_url
+              name: image_url
+              type: "string"
+
+          - column:
+              header: small_image_url
+              name: small_image_url
+              type: "string"
+        file: data/work_book_denormalized.csv
+        relativeToChangelogFile: true
+        separator: ','
+        quotchar: "\""
+        seperator: ','
+        encoding: UTF-8
+        tableName: book

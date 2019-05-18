@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0000-users-test-data
+      author: iborisenko
+
+
+      runOnChange: true
+      loadUpdateData:
+        primaryKey: id
+        columns:
+          - column:
+              header: id
+              name: id
+              type: "string"
+          - column:
+              header: name
+              name: name
+              type: "string"
+          - column:
+              header: email
+              name: email
+              type: "string"
+          - column:
+              header: password
+              name: password
+              type: "string"
+          - column:
+              header: EMAIL_VERIFIED
+              name: EMAIL_VERIFIED
+              type: "boolean"
+          - column:
+              header: PROVIDER
+              name: PROVIDER
+              type: "string"
+        file: data/user.csv
+        relativeToChangelogFile: true
+        separator: ';'
+        quotchar: "\""
+        seperator: ';'
+        encoding: UTF-8
+        tableName: users

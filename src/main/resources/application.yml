@@ -1,0 +1,69 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+server:
+  port: 8090
+
+logging:
+  #pattern:
+  console:
+  config: 'classpath:log4j2.properties'
+  level:
+    root: debug
+
+app:
+  auth:
+    tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+    tokenExpirationMsec: 864000000
+    tokenExpirationMsecForRememberMe: 864000000
+  oauth2:
+    # After successfully authenticating with the OAuth2 Provider,
+    # we'll be generating an auth token for the user and sending the token to the
+    # redirectUri mentioned by the client in the /oauth2/authorize request.
+    # We're not using cookies because they won't work well in mobile clients.
+    authorizedRedirectUris:
+
+migrationFromKaggleDataSetJob:
+  ratingSkipLines: 950000
+
+spring:
+  batch:
+    job:
+      enabled: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 307334656651-dv2a6kjn47ukcr96b0oathtg884oovjt.apps.googleusercontent.com
+            client-secret: DBgq8MorrimMf5nFPtiilE0Z
+            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
+
+  liquibase.enabled: true
+  datasource:
+    url: "jdbc:h2:mem:testdb"
+    username: "sa"
+    password: ""
+    driver-class-name: "org.h2.Driver"
+  profiles:
+    active:
+      - "springDataJpa"
+      - "shellDisabled"
+---
+spring:
+  profiles: "springDataJpa"
+---
+spring:
+  profiles: "springBatch"
+---
+spring:
+  profiles: "shellDisabled"
+  shell:
+    interactive:
+      enabled: false

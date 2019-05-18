@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0005-user-authority-test-data
+      author: iborisenko
+      context: test
+      runOnChange: true
+      loadUpdateData:
+        primaryKey: user_id,authority_id
+        columns:
+          - column:
+              header: user_id
+              name: user_id
+              type: "string"
+          - column:
+              header: user_name
+              type: "skip"
+          - column:
+              header: authority_id
+              name: authority_id
+              type: "string"
+          - column:
+              header: authority_name
+              type: "skip"
+        file: data/user_authority.csv
+        relativeToChangelogFile: true
+        separator: ';'
+        quotchar: "\""
+        seperator: ';'
+        encoding: UTF-8
+        tableName: user_authority

@@ -1,0 +1,60 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0003-book-tag-test-data-fk-off
+      author: igornb
+      context: prod
+      runOnChange: true
+      sql: SET FOREIGN_KEY_CHECKS=0;
+  - changeSet:
+      id: 0003-book-tag-test-data
+      author: igornb
+      context: test
+      runOnChange: true
+
+      loadData:
+        primaryKey: book_id, tag_id
+        columns:
+          - column:
+              name: version
+              value:
+          - column:
+              header: goodreads_book_id
+              name: book_id
+              type: "string"
+          - column:
+              header: tag_id
+              name: tag_id
+              type: "string"
+          - column:
+              header: count
+              type: "skip"
+          #standart migration defaults for audit fields
+          - column:
+              value: "1"
+              name: CREATED_BY_USER_ID
+              type: "string"
+          - column:
+              value: "1"
+              name: LAST_UPD_BY_USER_ID
+              type: "string"
+          - column:
+              valueNumeric: "0"
+              name: created_date
+              type: "NUMERIC"
+          - column:
+              valueNumeric: "0"
+              name: updated_date
+              type: "NUMERIC"
+        file: data/book_tag.csv
+        relativeToChangelogFile: true
+        separator: ','
+        quotchar: "\""
+        seperator: ','
+        encoding: UTF-8
+        tableName: book_tag
+  - changeSet:
+      id: 0003-book-tag-test-data-fk-on
+      author: igornb
+      context: test
+      runOnChange: true
+      sql: SET FOREIGN_KEY_CHECKS=1;

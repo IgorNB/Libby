@@ -1,0 +1,197 @@
+databaseChangeLog:
+- changeSet:
+    id: 1558113668870-1
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDX1a9ac2fhbds8iu01p3u0qryqr
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_original_publication_year
+        indexName: IDX1a9ac2fhbds8iu01p3u0qryqr
+        tableName: task
+- changeSet:
+    id: 1558113668870-2
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDX7efrsjvmkh4g4hl42d148jbiq
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: original_publication_year
+        indexName: IDX7efrsjvmkh4g4hl42d148jbiq
+        tableName: book
+- changeSet:
+    id: 1558113668870-3
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDX7lnbjn4olq502sa2djtbtiau7
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_name
+        indexName: IDX7lnbjn4olq502sa2djtbtiau7
+        tableName: task
+- changeSet:
+    id: 1558113668870-4
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDX9djweysaamabb5g36fklcvwsd
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_isbn13
+        indexName: IDX9djweysaamabb5g36fklcvwsd
+        tableName: task
+- changeSet:
+    id: 1558113668870-5
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDX9pk3ohrfah1yyfy52tllkct3v
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: authors
+        indexName: IDX9pk3ohrfah1yyfy52tllkct3v
+        tableName: book
+- changeSet:
+    id: 1558113668870-6
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXae80dqity6427ti0gkyfmw5w2
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_authors
+        indexName: IDXae80dqity6427ti0gkyfmw5w2
+        tableName: task
+- changeSet:
+    id: 1558113668870-7
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXdjx0bsw5qtlpa3ertiyf8j0bc
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: isbn13
+        indexName: IDXdjx0bsw5qtlpa3ertiyf8j0bc
+        tableName: book
+- changeSet:
+    id: 1558113668870-8
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXehpdfjpu1jm3hijhj4mm0hx9h
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: isbn
+        indexName: IDXehpdfjpu1jm3hijhj4mm0hx9h
+        tableName: book
+- changeSet:
+    id: 1558113668870-9
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXg0286ag1dlt4473st1ugemd0m
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: title
+        indexName: IDXg0286ag1dlt4473st1ugemd0m
+        tableName: book
+- changeSet:
+    id: 1558113668870-10
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXgrelnv452li3iqw1fiu0pobbs
+        tableName: lang
+    - createIndex:
+        columns:
+        - column:
+            name: code
+        indexName: IDXgrelnv452li3iqw1fiu0pobbs
+        tableName: lang
+- changeSet:
+    id: 1558113668870-11
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXom7yrib5451am88usrq3sfw9b
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_title
+        indexName: IDXom7yrib5451am88usrq3sfw9b
+        tableName: task
+- changeSet:
+    id: 1558113668870-12
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXr0cu4q1ovo6xdc4dcy15k4x66
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: original_title
+        indexName: IDXr0cu4q1ovo6xdc4dcy15k4x66
+        tableName: book
+- changeSet:
+    id: 1558113668870-13
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXs0r6lajwhb599g5s1cjtmwqq6
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_isbn
+        indexName: IDXs0r6lajwhb599g5s1cjtmwqq6
+        tableName: task
+- changeSet:
+    id: 1558113668870-14
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXshw9v7g304jesuup44sow2jgm
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_original_title
+        indexName: IDXshw9v7g304jesuup44sow2jgm
+        tableName: task
+- changeSet:
+    id: 1558113668870-15
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXwugryet8mf6oi28n00x2eoc4
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: name
+        indexName: IDXwugryet8mf6oi28n00x2eoc4
+        tableName: book
+

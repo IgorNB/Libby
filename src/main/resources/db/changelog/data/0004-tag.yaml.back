@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0004-tag-test-data
+      author: igornb
+      context: test
+      runOnChange: true
+      loadUpdateData:
+        primaryKey: id
+        columns:
+          - column:
+              name: version
+              value: 0
+          - column:
+              header: tag_name
+              name: tag_name
+              type: "string"
+          - column:
+              header: tag_id
+              name: id
+              type: "string"
+        file: data/tag.csv
+        relativeToChangelogFile: true
+        separator: ','
+        quotchar: "\""
+        seperator: ','
+        encoding: UTF-8
+        tableName: tag

@@ -1,0 +1,2 @@
+user_id;user_name;authority_id;authority_name
+0-1;admin;0-2;ROLE_ADMIN

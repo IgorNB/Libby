@@ -1,0 +1,2 @@
+id;name;email;password;EMAIL_VERIFIED;PROVIDER
+0-1;admin;admin@localhost;$2a$10$y6KLN2tdH.FENVnQnFYDKehU4bXB8u7UYbMhTkxF/.WUQfoiabDnK;TRUE;local

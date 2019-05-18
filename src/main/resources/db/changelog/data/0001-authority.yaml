@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0001-authority-test-data
+      author: iborisenko
+      context: test
+      runOnChange: true
+      loadUpdateData:
+        primaryKey: id
+        columns:
+          - column:
+              header: id
+              name: id
+              type: "string"
+          - column:
+              header: name
+              name: name
+              type: "string"
+        file: data/authority.csv
+        relativeToChangelogFile: true
+        separator: ';'
+        quotchar: "\""
+        seperator: ';'
+        encoding: UTF-8
+        tableName: authority

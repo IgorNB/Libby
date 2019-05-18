@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0001-lang-test-data
+      author: igornb
+      context: test
+      runOnChange: true
+      loadData:
+        primaryKey: id
+        columns:
+          - column:
+              name: version
+              value:
+          - column:
+              header: id
+              name: id
+              type: "string"
+          - column:
+              header: code
+              name: code
+              type: "string"
+        file: data/lang.csv
+        relativeToChangelogFile: true
+        separator: ','
+        quotchar: "\""
+        seperator: ','
+        encoding: UTF-8
+        tableName: lang
