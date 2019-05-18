@@ -57,6 +57,7 @@ public class User extends GenericAbstractPersistentAuditingObject<User> {
             inverseJoinColumns = {@JoinColumn(name = USER_AUTHORITY_JOIN_TABLE_AUTHORITY_FK_COLUMN, referencedColumnName = ID_COLUMN)})
     private Set<Authority> authorities = new HashSet<>();
 
+    @SuppressWarnings("S2068") //here we skip sonar rule "Credentials should not be hard-coded" due to this is just name of DB column
     public static final class Columns {
         public static final String NAME_COLUMN = "name";
         public static final String EMAIL_COLUMN = "email";

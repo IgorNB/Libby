@@ -28,7 +28,7 @@
     </scm>
     <ciManagement>
         <system>Travis CI</system>
-        <url>https://travis-ci.org/IgorNB/Libby</url>
+        <url>https://travis-ci.com/IgorNB/Libby</url>
     </ciManagement>
     <issueManagement>
         <system>GitHub</system>

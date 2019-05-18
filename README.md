@@ -1,4 +1,9 @@
-
+[![Build Status](https://travis-ci.com/IgorNB/libby.svg?branch=master)](https://travis-ci.com/IgorNB/Libby)
+[![SonarCloud Quality](https://sonarcloud.io/api/project_badges/measure?project=com.lig%3Alibby&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.lig%3Alibby)
+[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.lig%3Alibby&metric=coverage)](https://sonarcloud.io/dashboard?id=com.lig%3Alibby)
+[![SonarCloud CodeSmell](https://sonarcloud.io/api/project_badges/measure?project=com.lig%3Alibby&metric=code_smells)](https://sonarcloud.io/dashboard?id=com.lig%3Alibby)
+[![SonarCloud Bug](https://sonarcloud.io/api/project_badges/measure?project=com.lig%3Alibby&metric=bugs)](https://sonarcloud.io/dashboard?id=com.lig%3Alibby)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 # Libby Pet-Project
 See demo on [youtube](https://www.youtube.com/watch?v=tGOQ4pxfIx8&feature=youtu.be).
 
@@ -14,7 +19,7 @@ This application is a sample project which illustrates rest-api integration of
 ## Getting Started
 * get source code
 ```
-git clone https://github.com/IgorNB/Quizzy.git
+git clone https://github.com/IgorNB/Libby.git
 ```
 
 * install front-end dependencies
