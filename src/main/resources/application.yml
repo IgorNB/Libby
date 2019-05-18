@@ -8,11 +8,11 @@ server:
   port: 8090
 
 logging:
-  #pattern:
+  pattern:
   console:
   config: 'classpath:log4j2.properties'
   level:
-    root: debug
+    root: warn
 
 app:
   auth:
