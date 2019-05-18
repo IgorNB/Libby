@@ -6,6 +6,7 @@ import com.lig.libby.controller.adapter.userui.mapper.save.CommentPublicUiApiSav
 import com.lig.libby.controller.core.uiadapter.GenricUIApiController;
 import com.lig.libby.domain.Authority;
 import com.lig.libby.domain.Comment;
+import com.lig.libby.repository.CommentRepository;
 import com.lig.libby.service.CommentService;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class CommentPublicController implements GenricUIApiController<CommentPub
     // 1) same field names (DTO can has only subset) due to @QuerydslPredicate is builded for Comment.class, while api request is made for CommentDto.class
     // 2) Pagination for is not broken during Mapper work (e.g no filtering in mapping process used) due to pageable usage
     // 3) bindings = ... is needed only for @ActiveProfile eq. "springJdbc" and "springJpa" where Repository bean is custom, so does not support bind with repository itself
-    public Page<CommentPublicDto> findAll(@QuerydslPredicate(root = Comment.class) Predicate predicate, Pageable pageable, Authentication authentication) {
+    public Page<CommentPublicDto> findAll(@QuerydslPredicate(root = Comment.class, bindings = CommentRepository.class) Predicate predicate, Pageable pageable, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return readMapper.pageableEntityToDto(service.findAll(predicate, pageable, userDetails));
     }
