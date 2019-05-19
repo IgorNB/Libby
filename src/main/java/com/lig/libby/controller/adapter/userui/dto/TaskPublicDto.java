@@ -50,4 +50,6 @@ public class TaskPublicDto extends GenericAbstractPersistentAuditingObject<UserP
     private String bookSmallImageUrl;
 
     private BookPublicDto book;
+
+    private BigInteger points;
 }

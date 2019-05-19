@@ -28,6 +28,7 @@ export const tasks = {
     fields: {
         "id": "идентификатор",
         "version": "версия",
+        "points" : "начислено баллов",
         "book": {
             "id": "book id",
             "version": "book version",

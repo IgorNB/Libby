@@ -51,6 +51,15 @@ public class Task extends GenericAbstractPersistentAuditingObject<User> {
     @JoinColumn(name = Columns.BOOK_ID)
     private Book book;
 
+    @Formula(" ( " +
+            " SELECT SUM(loy." + LoyaltyTransaction.Columns.POINTS + ")" +
+            " FROM " + LoyaltyTransaction.TABLE + " loy " +
+            " WHERE loy." + LoyaltyTransaction.Columns.TASK_ID + " = " + Task.ID_COLUMN +
+            " and loy." + LoyaltyTransaction.Columns.LOY_MEMBER_ID + " = " + Task.CREATED_BY_COLUMN +
+            " ) "
+    )
+    private BigInteger points;
+
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @Enumerated(EnumType.STRING)
     @Column(name = Columns.WORKFLOW_STEP, length = 25, nullable = false)
@@ -140,6 +149,7 @@ public class Task extends GenericAbstractPersistentAuditingObject<User> {
         public static final String BOOK_LANG_ID = "BOOK_LANG_ID";
         public static final String BOOK_WORK_ID = "BOOK_WORK_ID";
         public static final String BOOK_ID = "BOOK_ID";
+
         private Columns() {
             throw new IllegalStateException("Utility class");
         }

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Arrays;
+import java.util.Collection;
 
 @ThreadSafe
 @Service
@@ -25,17 +27,19 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final BookRepository bookRepository;
     private final EntityManager entityManager;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private WorkRepository workRepository;
+    private final UserRepository userRepository;
+    private final WorkRepository workRepository;
+    private final LoyaltyEngineGateway loyaltyEngineGateway;
 
 
     @Autowired
-    public TaskServiceImpl(@NonNull TaskRepository taskRepository, @NonNull BookRepository bookRepository, EntityManager entityManager) {
+    public TaskServiceImpl(@NonNull TaskRepository taskRepository, @NonNull BookRepository bookRepository, @NonNull EntityManager entityManager, @NonNull UserRepository userRepository, @NonNull WorkRepository workRepository, @NonNull LoyaltyEngineGateway loyaltyEngineGateway) {
         this.taskRepository = taskRepository;
         this.bookRepository = bookRepository;
         this.entityManager = entityManager;
+        this.userRepository = userRepository;
+        this.workRepository = workRepository;
+        this.loyaltyEngineGateway = loyaltyEngineGateway;
     }
 
     private void setAvailableCommands(Task entity, @NonNull UserDetails userDetails) {
@@ -79,6 +83,13 @@ public class TaskServiceImpl implements TaskService {
                     workRepository.saveAndFlush(approvedBookWork);
 
                     entity.setBook(approvedBook);
+
+                    LoyaltyTransaction loyaltyTransaction = new LoyaltyTransaction();
+                    loyaltyTransaction.setTask(entity);
+                    loyaltyTransaction.setLoyaltyMember(entity.getCreatedBy());
+                    Collection<LoyaltyAccrualRedemptionItem> loyaltyAccrualRedemptionItemList = loyaltyEngineGateway.process(Arrays.asList(loyaltyTransaction));
+                    //@Fomrula on field "points" in "task" entity will not see points here, because spring integration process transaction in separate @Transaction (and due to Hibernate cache too), so here we just pick points to task transient field
+                    entity.setPoints(loyaltyAccrualRedemptionItemList.stream().findFirst().map(LoyaltyAccrualRedemptionItem::getPoints).orElse(null));
                 } else if (Task.WorkflowStepEnum.SUBMITTED.name().equals(command)) {
                     User admin = userRepository.findFirstWithAdminAuthority();
                     entity.setAssignee(admin);

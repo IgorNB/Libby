@@ -109,6 +109,7 @@ const TaskEdit =({ translate, classes, ...props }) =>  (
             <TaskStatusColor disabled={true} isInput={true} {...props} source="workflowStep" label="resources.tasksPublic.fields.workflowStep"/>
             <LinkToRelatedBook/>
             <DisabledInput source="assignee.name" />
+            <DisabledInput source="points" label="resources.tasks.fields.points"/>
 
 
             <Grid container direction="row" spacing={32} >
