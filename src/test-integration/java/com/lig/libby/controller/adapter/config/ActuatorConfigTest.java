@@ -125,7 +125,7 @@ public class ActuatorConfigTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$.contexts.application.liquibaseBeans.liquibase.changeSets").exists());
+                .andExpect(jsonPath("$.contexts").exists());
 
     }
 

@@ -5,6 +5,8 @@ import com.lig.libby.repository.BookRepository;
 import com.lig.libby.repository.TaskRepository;
 import com.lig.libby.repository.UserRepository;
 import com.lig.libby.repository.WorkRepository;
+import com.lig.libby.service.core.GenericFallbackUIAPIService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import lombok.NonNull;
@@ -21,7 +23,8 @@ import javax.persistence.EntityManager;
 
 @ThreadSafe
 @Service
-public class TaskServiceImpl implements TaskService {
+public class TaskServiceImpl implements TaskService, GenericFallbackUIAPIService<Task, String> {
+    private static final String CMD_KEY_PRX = "TaskService_";
     private final TaskRepository taskRepository;
     private final BookRepository bookRepository;
     private final EntityManager entityManager;
@@ -90,6 +93,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = FIND_BY_ID_FALLBACK, commandKey = CMD_KEY_PRX + FIND_BY_ID_FALLBACK)
     public Task findById(@NonNull String id, @NonNull UserDetails userDetails) {
         Task entity = taskRepository.findById(id).orElse(null);
         setAvailableCommands(entity, userDetails);
@@ -97,6 +101,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = FIND_ALL_FALLBACK, commandKey = CMD_KEY_PRX + FIND_ALL_FALLBACK)
     public @NonNull Page<Task> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails) {
         BooleanBuilder where = new BooleanBuilder();
 
@@ -113,6 +118,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
+    @HystrixCommand(fallbackMethod = UPDATE_FALLBACK, commandKey = CMD_KEY_PRX + UPDATE_FALLBACK)
     public @NonNull Task update(@NonNull Task entity, @NonNull UserDetails userDetails) {
         Task currentEntity = this.findById(entity.getId(), userDetails);
         if (userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).noneMatch(a -> a.equals(Authority.Roles.ADMIN))
@@ -129,6 +135,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
+    @HystrixCommand(fallbackMethod = CREATE_FALLBACK, commandKey = CMD_KEY_PRX + CREATE_FALLBACK)
     public @NonNull Task create(@NonNull Task entity, @NonNull UserDetails userDetails) {
         User user = entityManager.getReference(User.class, userDetails.getUsername());
         entity.setAssignee(user);
@@ -138,7 +145,33 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = DELETE_BY_ID_FALLBACK, commandKey = CMD_KEY_PRX + DELETE_BY_ID_FALLBACK)
     public void deleteById(@NonNull String id) {
         taskRepository.deleteById(id);
+    }
+
+    @Override
+    public Task findByIdFallback(@NonNull String id, @NonNull UserDetails userDetails, Throwable cause) {
+        throw apiFallbackException(cause);
+    }
+
+    @Override
+    public @NonNull Page<Task> findAllFallback(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails, Throwable cause) {
+        throw apiFallbackException(cause);
+    }
+
+    @Override
+    public Task updateFallback(@NonNull Task entity, @NonNull UserDetails userDetails, Throwable cause) {
+        throw apiFallbackException(cause);
+    }
+
+    @Override
+    public Task createFallback(@NonNull Task entity, @NonNull UserDetails userDetails, Throwable cause) {
+        throw apiFallbackException(cause);
+    }
+
+    @Override
+    public void deleteByIdFallback(@NonNull String id, Throwable cause) {
+        throw apiFallbackException(cause);
     }
 }

@@ -8,6 +8,14 @@ management:
     web:
       exposure:
         include: '*'
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 20000
 
 server:
   port: 8090
