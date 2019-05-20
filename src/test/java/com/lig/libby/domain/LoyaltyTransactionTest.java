@@ -21,6 +21,9 @@ class LoyaltyTransactionTest {
     @Test
     void toStringTest() {
         ToStringVerifier.forClass(LoyaltyTransaction.class)
+                .withPrefabValue(Task.class, new Task())
+                .withPrefabValue(Book.class, new Book())
+                .withPrefabValue(Work.class, new Work())
                 .withClassName(NameStyle.SIMPLE_NAME)
                 .verify();
     }
