@@ -1,6 +1,7 @@
 export const booksPublic = {
         name: 'Book |||| Books',
-        validation: {},
+        validation: {
+        },
         list: {},
         edit: {
             title: 'Book',

@@ -7,8 +7,8 @@ const LangShow = props => (
         {controllerProps => (
             <ShowView {...props} {...controllerProps}>
                 <SimpleShowLayout>
-                    <TextField source="id" label="resources.langs.fields.id"/>
-                    <TextField source="code" label="resources.langs.fields.code"/>
+                        <TextField source="id" label="resources.langs.fields.id"/>
+                        <TextField source="code" label="resources.langs.fields.code"/>
                 </SimpleShowLayout>
             </ShowView>
         )}

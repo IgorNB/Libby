@@ -6,9 +6,8 @@ import CompactListActionsToolbar from "../../../core/layout/CompactListActionsTo
 const CommentShow = props => (
     <Show {...props}>
         <SimpleShowLayout>
-            <ReferenceField resource="commentsPublic" source="book.id" reference="booksPublic"
-                            label="resources.commentsPublic.fields.book.title" linkType="show">
-                <TextField source="title"/>
+            <ReferenceField resource="commentsPublic" source="book.id" reference="booksPublic" label="resources.commentsPublic.fields.book.title" linkType="show">
+                <TextField source="title" />
             </ReferenceField>
             <TextField source="createdBy.name" label="resources.commentsPublic.fields.createdBy.name"/>
             <CompactListActionsToolbar source="rating" label="resources.commentsPublic.fields.rating">

@@ -5,7 +5,8 @@ export const tasksPublic = {
         yearFormat: "Year format is required (from 0 to 3000). Example: 2019",
         ISBN13Format: "ISBN 13 format is required. Example: 9783836221191"
     },
-    list: {},
+    list: {
+    },
     edit: {
         title: 'My book',
         taskFieldGroup: 'Task',

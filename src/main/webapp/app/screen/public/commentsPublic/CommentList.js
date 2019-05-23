@@ -96,21 +96,20 @@ const CommentGrid = withStyles(listStyles)(
                     <Card className={classes.card}>
                         <CardHeader
                             className="comment"
-                            title={<ReferenceField resource="commentsPublic" record={data[id]} source="book.id"
-                                                   reference="booksPublic" basePath={basePath} linkType="show">
-                                <TextField source="title" className={classes.cardLinkLink}/>
-                            </ReferenceField>}
-                            subheader={<TextField record={data[id]} source="createdBy.name"/>}
-                            avatar={<Avatar> <PersonIcon/> </Avatar>}
+                            title={<ReferenceField resource="commentsPublic" record={data[id]} source="book.id" reference="booksPublic" basePath={basePath} linkType="show">
+                                        <TextField source="title" className={classes.cardLinkLink} />
+                                    </ReferenceField> }
+                            subheader={ <TextField record={data[id]} source="createdBy.name"  /> }
+                            avatar={ <Avatar> <PersonIcon/> </Avatar> }
                         />
                         <CardContent className={classes.cardContent}>
                             <CompactListActionsToolbar record={data[id]} source="rating">
-                                <StarRatingField/>
+                                <StarRatingField />
                             </CompactListActionsToolbar>
                             <TextField record={data[id]} source="body"/>
                         </CardContent>
                         <CardActions className={classes.cardActions}>
-                            <ShowButton resource="booksPublic" basePath={basePath} record={data[id]}/>
+                            <ShowButton resource="booksPublic" basePath={basePath} record={data[id]} />
                         </CardActions>
                     </Card>
                 </Grid>
@@ -136,9 +135,9 @@ const CommentMobileList = props => (
 
 const CommentList = props => (
     <List {...props}
-          perPage={6}
-          filters={<CommentFilter/>}
-          pagination={<CommentPagination/>}
+        perPage={6}
+        filters={<CommentFilter/>}
+        pagination={<CommentPagination/>}
     >
         <Responsive small={<CommentMobileList/>} medium={<CommentGrid/>}/>
     </List>

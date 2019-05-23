@@ -5,8 +5,8 @@ import {DisabledInput, Edit, required, SimpleForm, TextInput,} from 'react-admin
 const LangEdit = props => (
     <Edit {...props}>
         <SimpleForm>
-            <DisabledInput source="id" label="resources.langs.fields.id"/>
-            <TextInput source="code" validate={required()} resettable label="resources.langs.fields.code"/>
+                <DisabledInput source="id" label="resources.langs.fields.id"/>
+                <TextInput source="code" validate={required()} resettable label="resources.langs.fields.code"/>
         </SimpleForm>
     </Edit>
 );

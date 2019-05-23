@@ -7,7 +7,7 @@ const redirect = (basePath, id, data) => `/books/${data.book.id}/show`;
 const defaultValue = {rating: 5};
 const CommentCreate = props => (
     <Create {...props}>
-        <SimpleForm defaultValue={defaultValue} redirect={redirect}>
+        <SimpleForm defaultValue={defaultValue}  redirect={redirect}>
             <ReferenceInput label="Book" source="book.id" reference="books">
                 <AutocompleteInput optionText="title"/>
             </ReferenceInput>

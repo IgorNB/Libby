@@ -69,8 +69,7 @@ const BookList = withStyles(styles)(({classes, ...props}) => (
                     <ImageField source="smallImageUrl" reference="users" label="resources.books.fields.smallImageUrl"/>
                     <TextField source="title" label="resources.books.fields.title"/>
                     <TextField source="authors" label="resources.books.fields.authors"/>
-                    <NumberField source="originalPublicationYear"
-                                 label="resources.books.fields.originalPublicationYear"/>
+                    <NumberField source="originalPublicationYear" label="resources.books.fields.originalPublicationYear"/>
                     <NumberField source="averageRating" label="resources.books.fields.averageRating"/>
                     <CompactListActionsToolbar cellClassName={classes.title} source="averageRating" label="">
                         <StarRatingField className={classes.toolbar}/>
@@ -79,8 +78,7 @@ const BookList = withStyles(styles)(({classes, ...props}) => (
                     <NumberField source="ratingsCount" label="resources.books.fields.ratingsCount"/>
                     <TextField source="isbn" cellClassName={classes.title} label="resources.books.fields.isbn"/>
                     <TextField source="isbn13" cellClassName={classes.title} label="resources.books.fields.isbn13"/>
-                    <ReferenceField label="Lang" source="lang.id" reference="langs" allowEmpty
-                                    label="resources.books.fields.lang.code">
+                    <ReferenceField label="Lang" source="lang.id" reference="langs" allowEmpty label="resources.books.fields.lang.code">
                         <TextField source="code"/>
                     </ReferenceField>
                     <TextField source="id" label="resources.books.fields.id"/>
