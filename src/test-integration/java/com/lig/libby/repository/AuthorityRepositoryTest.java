@@ -2,10 +2,10 @@ package com.lig.libby.repository;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lig.libby.Main;
 import com.lig.libby.domain.Authority;
 import com.lig.libby.domain.QAuthority;
 import com.lig.libby.domain.User;
-import com.lig.libby.repository.common.DataJpaAuditConfig;
 import com.lig.libby.repository.common.EntityFactory;
 import com.querydsl.core.BooleanBuilder;
 import lombok.NonNull;
@@ -14,63 +14,53 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.data.jpa.repository.support.QuerydslJpaRepository;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.repository.support.QuerydslMongoPredicateExecutor;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 @TestPropertySource(properties = {"spring.batch.job.enabled=false"})
 @ExtendWith(SpringExtension.class)
-@DataJpaTest(includeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = {DataJpaAuditConfig.class}))
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = {Main.class})
 @ActiveProfiles({"shellDisabled", "springDataJpa", "AuthorityRepositoryTest"})
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class AuthorityRepositoryTest {
 
 
     public static final String OPERATION_NOT_SUPPORTED = "Operation not supported";
     public final AuthorityRepository repository;
-    private final TestEntityManager em;
-    private final EntityManager entityManager;
     private final EntityFactory<Authority> entityFactoryAuthority;
 
     @Autowired
-    public AuthorityRepositoryTest(@NonNull AuthorityRepository repository, @NonNull TestEntityManager em, @NonNull EntityFactory<Authority> entityFactoryAuthority, @NonNull EntityManager entityManager) {
+    public AuthorityRepositoryTest(@NonNull AuthorityRepository repository, @NonNull EntityFactory<Authority> entityFactoryAuthority) {
         this.repository = repository;
-        this.em = em;
         this.entityFactoryAuthority = entityFactoryAuthority;
-        this.entityManager = entityManager;
     }
 
     @Test
     public void testRepositoryInterfaceImplementationAutowiring() {
-        assertThat(repository instanceof QuerydslJpaRepository
-                || AopUtils.getTargetClass(repository).equals(QuerydslJpaRepository.class)
+        assertThat(repository instanceof QuerydslMongoPredicateExecutor
+                || AopUtils.getTargetClass(repository).equals(QuerydslMongoPredicateExecutor.class)
+                || repository.toString().contains(QuerydslMongoPredicateExecutor.class.getName())
         ).isTrue();
     }
 
     @Test
-    @Transactional
+
     public void saveAndQueryTest() {
         final Authority entity = entityFactoryAuthority.getNewEntityInstance();
         String id = entity.getId();
@@ -78,7 +68,7 @@ class AuthorityRepositoryTest {
 
         final Authority deepEntityCopy = (Authority) SerializationUtils.clone(entity);
 
-        final Authority entitySaved = repository.saveAndFlush(entity);
+        final Authority entitySaved = repository.saveAndFind(entity);
         final Authority entityQueried = repository.findById(id).orElse(null);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -99,13 +89,13 @@ class AuthorityRepositoryTest {
     }
 
     @Test
-    @Transactional
+
     public void updateAndQueryTest() {
-        final Authority entitySaved = repository.saveAndFlush(entityFactoryAuthority.getNewEntityInstance());
+        final Authority entitySaved = repository.saveAndFind(entityFactoryAuthority.getNewEntityInstance());
         final Authority deepEntitySavedCopy = (Authority) SerializationUtils.clone(entitySaved);
         entitySaved.setLastUpdBy(entityFactoryAuthority.getNewEntityInstance().getLastUpdBy());
 
-        final Authority entityUpdated = repository.saveAndFlush(entitySaved);
+        final Authority entityUpdated = repository.saveAndFind(entitySaved);
 
 
         deepEntitySavedCopy.setVersion(deepEntitySavedCopy.getVersion() + 1);
@@ -124,13 +114,13 @@ class AuthorityRepositoryTest {
     }
 
     @Test
-    @Transactional
+
     public void findWithPredicateTest() {
-        final Authority entitySaved1 = repository.saveAndFlush(entityFactoryAuthority.getNewEntityInstance());
+        final Authority entitySaved1 = repository.saveAndFind(entityFactoryAuthority.getNewEntityInstance());
 
         Authority authority2 = entityFactoryAuthority.getNewEntityInstance();
 
-        final Authority entitySaved2 = repository.saveAndFlush(authority2);
+        final Authority entitySaved2 = repository.saveAndFind(authority2);
 
         BooleanBuilder where = new BooleanBuilder();
 
@@ -150,11 +140,11 @@ class AuthorityRepositoryTest {
     @Test
     void getAuthorityByName() {
 
-        final Authority entitySaved1 = repository.saveAndFlush(entityFactoryAuthority.getNewEntityInstance());
+        final Authority entitySaved1 = repository.saveAndFind(entityFactoryAuthority.getNewEntityInstance());
 
         Authority authority2 = entityFactoryAuthority.getNewEntityInstance();
 
-        final Authority entitySaved2 = repository.saveAndFlush(authority2);
+        final Authority entitySaved2 = repository.saveAndFind(authority2);
 
         Authority authorityQueried = repository.getAuthorityByName(entitySaved2.getName());
 
@@ -170,7 +160,7 @@ class AuthorityRepositoryTest {
 
         @Bean
         @Primary
-        public AuditorAware<User> auditorProvider(@Autowired EntityManager entityManager) {
+        public AuditorAware<User> auditorProvider(@Autowired MongoOperations entityManager) {
             return () -> {
                 SecurityContext securityContext = SecurityContextHolder.getContext();
                 return Optional.ofNullable(securityContext.getAuthentication())
@@ -185,10 +175,10 @@ class AuthorityRepositoryTest {
         }
 
         @Bean
-        public EntityFactory<Authority> getNewEntityInstance(TestEntityManager em) {
+        public EntityFactory<Authority> getNewEntityInstance(MongoOperations em) {
             return new EntityFactory<Authority>() {
                 @Override
-                @Transactional(propagation = Propagation.REQUIRES_NEW)
+
                 public Authority getNewEntityInstance() {
                     String userName = "test-user-name" + UUID.randomUUID().toString().replaceAll("-", "");
                     User userNew = new User();
@@ -196,7 +186,8 @@ class AuthorityRepositoryTest {
                     userNew.setEmail(userName + "@libby.com");
                     userNew.setProvider(Authority.AuthProvider.local);
                     userNew.setPassword("test-encrypted-password" + userName);
-                    final User user = em.persistFlushFind(userNew);
+                    em.save(userNew);
+                    final User user = em.findById(userNew.getId(), User.class);
 
                     String authorityName2 = "test-authority-name" + UUID.randomUUID().toString().replaceAll("-", "");
                     Authority authorityNew2 = new Authority();

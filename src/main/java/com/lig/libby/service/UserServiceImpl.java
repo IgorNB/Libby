@@ -1,7 +1,9 @@
 package com.lig.libby.service;
 
+import com.lig.libby.domain.QUser;
 import com.lig.libby.domain.User;
 import com.lig.libby.repository.UserRepository;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import lombok.NonNull;
 import net.jcip.annotations.ThreadSafe;
@@ -28,19 +30,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public @NonNull Page<User> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails) {
+        if (predicate == null) {
+            predicate = new BooleanBuilder().and(QUser.user.id.isNotNull());
+        }
         return userRepository.findAll(predicate, pageable);
     }
 
     @NonNull
     @Override
     public User update(@NonNull User entity, @NonNull UserDetails userDetails) {
-        return userRepository.save(entity);
+        return userRepository.saveAndFind(entity);
     }
 
     @NonNull
     @Override
     public User create(@NonNull User entity, @NonNull UserDetails userDetails) {
-        return userRepository.save(entity);
+        return userRepository.saveAndFind(entity);
     }
 
     @Override

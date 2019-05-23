@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @ExtendWith(SpringExtension.class)
-//spring batch test does not support @Transactional on test
+//spring batch test does not support  on test
 //so we'll use separate DB by overriding property "spring.datasource.url" with unique name for this test
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = {Main.class})
 @ActiveProfiles({"BatchConfigurationTest", "springDataJpa", "shellDisabled"})

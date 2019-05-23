@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
@@ -34,7 +33,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     @Override
-    @Transactional
+
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
 
@@ -85,13 +84,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (authority != null) {
             user.getAuthorities().add(authority);
         }
-        return userRepository.save(user);
+        return userRepository.saveAndFind(user);
     }
 
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
         existingUser.setName(oAuth2UserInfo.getName());
         existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
-        return userRepository.save(existingUser);
+        return userRepository.saveAndFind(existingUser);
     }
 
 }

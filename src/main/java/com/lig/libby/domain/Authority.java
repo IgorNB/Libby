@@ -5,17 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import net.jcip.annotations.NotThreadSafe;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
-
-import static com.lig.libby.domain.Authority.NAME_COLUMN;
-
+@Document(collection = Authority.TABLE)
 @NotThreadSafe
-@Entity
-@Table(name = Authority.TABLE, indexes = {@Index(columnList = NAME_COLUMN, unique = true)})
 @Getter
 @Setter
 @ToString(callSuper = true)
@@ -24,7 +18,7 @@ public class Authority extends GenericAbstractPersistentAuditingObject<User> {
     public static final String TABLE = "AUTHORITY";
     public static final String NAME_COLUMN = "NAME";
 
-    @Column(name = NAME_COLUMN, nullable = false)
+    @Field(NAME_COLUMN)
     private String name;
 
 
