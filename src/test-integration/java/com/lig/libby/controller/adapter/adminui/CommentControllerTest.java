@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -86,7 +87,7 @@ public class CommentControllerTest {
     }
 
     @Test
-    @Transactional
+
     public void findOneTest() throws Exception {
         User user = TestUtil.createAndSaveUserWithAdminRole(passwordEncoder, authorityRepository, userRepository);
         Lang lang = TestUtil.createAndSaveLang(langRepository);
@@ -120,8 +121,9 @@ public class CommentControllerTest {
     }
 
 
-    @Transactional
+
     @TestFactory
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     Stream<DynamicTest> dynamicFindAllTest() {
         List<TestArgs<User, String, String, List<Comment>, String, String, String>> inputList;
         {
@@ -191,7 +193,7 @@ public class CommentControllerTest {
 
 
     @Test
-    @Transactional
+
     void create() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
         Lang lang = TestUtil.createAndSaveLang(langRepository);
@@ -204,7 +206,8 @@ public class CommentControllerTest {
         User admin = userRepository.findByEmail("admin@localhost").orElse(null);
         Comment findResponseDto = TestUtil.getDtoByIdByUser(admin, "admin", comment, "/comments/", mockMvc, Comment.class);
         Comment createDto = (Comment) SerializationUtils.clone(findResponseDto);
-        createDto.setId("");
+        createDto.setId(new Comment().getId());
+        createDto.setVersion(null);
 
         Comment responseDto = TestUtil.postDtoByUser(admin, "admin", createDto, "/comments/", mockMvc, Comment.class);
 
@@ -232,7 +235,7 @@ public class CommentControllerTest {
 
 
     @Test
-    @Transactional
+
     void update() throws Exception {
         User admin = userRepository.findByEmail("admin@localhost").orElse(null);
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
@@ -260,7 +263,7 @@ public class CommentControllerTest {
 
 
     @Test
-    @Transactional
+
     void delete() throws Exception {
 
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);

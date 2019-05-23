@@ -5,20 +5,26 @@ import com.lig.libby.config.util.StringIntegerConverter;
 import com.lig.libby.config.util.StringStringConverter;
 import com.lig.libby.domain.*;
 import com.lig.libby.domain.core.AbstractPersistentObject;
+import com.lig.libby.repository.BookRepository;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.database.JpaItemWriter;
+import org.springframework.batch.item.data.MongoItemWriter;
+import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.JdbcPagingItemReader;
+import org.springframework.batch.item.database.Order;
+import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
+import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.support.PassThroughItemProcessor;
-import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,11 +33,13 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Configuration
 @EnableBatchProcessing
@@ -99,97 +107,79 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public ItemProcessor<BookMigration, BookMigration> bookDoNothingProcessor() {
-        return new PassThroughItemProcessor<>();
+    public ItemProcessor<BookMigration, Work> bookMigrationToWorkProcessor() {
+        return item -> {
+            Work work = new Work();
+            work.setId(item.getId());
+            return work;
+        };
     }
 
     @Bean
-    public JpaItemWriter<BookMigration> bookMigrationJpaItemWriter(EntityManagerFactory entityManagerFactory) {
-        JpaItemWriter<BookMigration> writer = new JpaItemWriter<>();
-        writer.setEntityManagerFactory(entityManagerFactory);
+    public MongoItemWriter<Work> workMongoItemWriter(MongoTemplate entityManagerFactory) {
+        MongoItemWriter<Work> writer = new MongoItemWriter<>();
+        writer.setTemplate(entityManagerFactory);
         return writer;
 
     }
 
     @Bean
-    public Step stepBookCSVLoadToMigrationTable(JpaItemWriter<BookMigration> writer, TaskExecutor springBatchTaskExecutor, FlatFileItemReader<BookMigration> workBookCsvToWorkBookReader, ItemProcessor<BookMigration, BookMigration> bookDoNothingProcessor) {
-        return stepBuilderFactory.get("stepBookCSVLoadToMigrationTable")
-                .<BookMigration, BookMigration>chunk(500)
+    public Step stepInsertWorkWithoutBestBookIdFromBookMigration(MongoItemWriter<Work> bookMigrationMongoItemWriter, TaskExecutor springBatchTaskExecutor, FlatFileItemReader<BookMigration> workBookCsvToWorkBookReader, ItemProcessor<BookMigration, Work> workMongoItemWriter) {
+        return stepBuilderFactory.get("stepInsertWorkWithoutBestBookIdFromBookMigration")
+                .<BookMigration, Work>chunk(500)
                 .reader(workBookCsvToWorkBookReader)
-                .processor(bookDoNothingProcessor)
-                .writer(writer)
+                .processor(workMongoItemWriter)
+                .writer(bookMigrationMongoItemWriter)
                 .taskExecutor(springBatchTaskExecutor).throttleLimit(20)
                 .build();
     }
 
     @Bean
-    @SuppressWarnings("squid:S1192") //ignore "String literals should not be duplicated" rule for jdbc class
-    public Tasklet insertWorkWithoutBestBookIdFromBookMigrationTasklet(DataSource dataSource) {
-        return (contribution, chunkContext) -> {
-            new JdbcTemplate(dataSource)
-                    .execute(
-                            "INSERT INTO " + Work.TABLE +
-                                    "( " + Work.ID_COLUMN +
-                                    ") " +
-                                    " select " +
-                                    "  bm." + BookMigration.ID_COLUMN +
-                                    " from " + BookMigration.TABLE + " bm "
-                    );
-            return RepeatStatus.FINISHED;
+    public ItemProcessor<BookMigration, Book> bookMigrationToBookProcessor() {
+        return item -> {
+            Book book = new Book();
+            book.setId(item.getBookId());
+            book.setIsbn(item.getIsbn());
+            book.setIsbn13(item.getIsbn13());
+            book.setAuthors(item.getAuthors());
+            book.setOriginalPublicationYear(item.getOriginalPublicationYear());
+            book.setOriginalTitle(item.getOriginalTitle());
+            book.setTitle(item.getTitle());
+            book.setImageUrl(item.getImageUrl());
+            book.setSmallImageUrl(item.getSmallImageUrl());
+            book.setName(item.getName());
+            if (item.getLanguageCode() != null) {
+                Lang lang = new Lang();
+                lang.setId(item.getLanguageCode());
+                book.setLang(lang);
+            }
+
+            Work work = new Work();
+            work.setId(item.getWorkId());
+            book.setWork(work);
+            return book;
         };
     }
 
     @Bean
-    public Step stepBookMigrationLoadToWorkWithoutBestBookId(Tasklet insertWorkWithoutBestBookIdFromBookMigrationTasklet) {
-        return this.stepBuilderFactory.get("stepRatingMigrationTableLoadToUserAndUserAuthorityDomainTable")
-                .tasklet(insertWorkWithoutBestBookIdFromBookMigrationTasklet)
-                .build();
+    public MongoItemWriter<Book> bookMongoItemWriter(MongoTemplate entityManagerFactory) {
+        MongoItemWriter<Book> writer = new MongoItemWriter<>();
+        writer.setTemplate(entityManagerFactory);
+        return writer;
+
     }
 
     @Bean
-    public Tasklet insertBookFromBookMigrationTasklet(DataSource dataSource) {
-        return (contribution, chunkContext) -> {
-            new JdbcTemplate(dataSource)
-                    .execute(
-                            "INSERT INTO " + Book.TABLE +
-                                    "( " + Book.ID_COLUMN +
-                                    ", " + Book.Columns.ISBN +
-                                    ", " + Book.Columns.ISBN13 +
-                                    ", " + Book.Columns.AUTHORS +
-                                    ", " + Book.Columns.ORIGINAL_PUBLICATION_YEAR +
-                                    ", " + Book.Columns.ORIGINAL_TITLE +
-                                    ", " + Book.Columns.TITLE +
-                                    ", " + Book.Columns.IMAGE_URL +
-                                    ", " + Book.Columns.SMALL_IMAGE_URL +
-                                    ", " + Book.Columns.NAME +
-                                    ", " + Book.Columns.LANG_ID +
-                                    ", " + Book.Columns.WORK_ID +
-                                    ") " +
-                                    " select " +
-                                    "  bm." + BookMigration.Columns.BOOK_ID +
-                                    ", bm." + BookMigration.Columns.ISBN +
-                                    ", bm." + BookMigration.Columns.ISBN13 +
-                                    ", bm." + BookMigration.Columns.AUTHORS +
-                                    ", bm." + BookMigration.Columns.ORIGINAL_PUBLICATION_YEAR +
-                                    ", bm." + BookMigration.Columns.ORIGINAL_TITLE +
-                                    ", bm." + BookMigration.Columns.TITLE +
-                                    ", bm." + BookMigration.Columns.IMAGE_URL +
-                                    ", bm." + BookMigration.Columns.SMALL_IMAGE_URL +
-                                    ", bm." + BookMigration.Columns.NAME +
-                                    ", bm." + BookMigration.Columns.LANGUAGE_CODE +
-                                    ", bm." + BookMigration.ID_COLUMN +
-                                    " from " + BookMigration.TABLE + " bm "
-                    );
-            return RepeatStatus.FINISHED;
-        };
-    }
-
-    @Bean
-    public Step stepBookMigrationLoadToBook(Tasklet insertBookFromBookMigrationTasklet) {
-        return this.stepBuilderFactory.get("stepBookMigrationLoadToBook")
-                .tasklet(insertBookFromBookMigrationTasklet)
+    public Step stepInsertBookFromBookMigration(MongoItemWriter<Book> bookMigrationMongoItemWriter, TaskExecutor springBatchTaskExecutor, FlatFileItemReader<BookMigration> workBookCsvToWorkBookReader, ItemProcessor<BookMigration, Book> bookMigrationToBookProcessor) {
+        return stepBuilderFactory.get("stepInsertBookFromBookMigration")
+                .<BookMigration, Book>chunk(500)
+                .reader(workBookCsvToWorkBookReader)
+                .processor(bookMigrationToBookProcessor)
+                .writer(bookMigrationMongoItemWriter)
+                .taskExecutor(springBatchTaskExecutor).throttleLimit(20)
                 .build();
     }
+
 
     @Bean
     public FlatFileItemReader<RatingMigration> ratingCsvToRatingMigrationReader(@Value("${migrationFromKaggleDataSetJob.ratingSkipLines}") Integer ratingSkipLines) {
@@ -217,108 +207,159 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public JpaItemWriter<RatingMigration> ratingMigrationJpaItemWriter(EntityManagerFactory entityManagerFactory) {
-        JpaItemWriter<RatingMigration> writer = new JpaItemWriter<>();
-        writer.setEntityManagerFactory(entityManagerFactory);
+    public JdbcBatchItemWriter<RatingMigration> ratingMigrationJdbcItemWriter(DataSource dataSource) {
+        return new JdbcBatchItemWriterBuilder<RatingMigration>()
+                .dataSource(dataSource)
+                .sql("INSERT INTO " + RatingMigration.TABLE +
+                        " (" +
+                        " " + RatingMigration.ID_COLUMN +
+                        " ," + RatingMigration.Columns.BOOK_ID_COLUMN +
+                        " ," + RatingMigration.Columns.USER_ID_COLUMN +
+                        " ," + RatingMigration.Columns.RATING_COLUMN +
+                        " )" +
+                        " VALUES " +
+                        " ( " +
+                        "   :" + AbstractPersistentObject.Fields.id +
+                        " , :" + RatingMigration.Fields.bookId +
+                        " , :" + RatingMigration.Fields.userId +
+                        " , :" + RatingMigration.Fields.rating +
+                        " ) ")
+                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider())
+                .build();
+    }
+
+    @Bean
+    public Step stepRatingCSVLoadToMigrationTable(JdbcBatchItemWriter<RatingMigration> ratingMigrationJdbcItemWriter, TaskExecutor springBatchTaskExecutor, FlatFileItemReader<RatingMigration> ratingCsvToRatingMigrationReader, ItemProcessor<RatingMigration, RatingMigration> ratingDoNothingProcessor) {
+        return stepBuilderFactory.get("stepRatingCSVLoadToMigrationTable")
+                .<RatingMigration, RatingMigration>chunk(5000)
+                .reader(ratingCsvToRatingMigrationReader)
+                .processor(ratingDoNothingProcessor)
+                .writer(ratingMigrationJdbcItemWriter)
+                .taskExecutor(springBatchTaskExecutor).throttleLimit(20)
+                .build();
+    }
+
+    @Bean
+    public JdbcPagingItemReader<User> ratingMigrationToUserReader(DataSource dataSource) {
+        return new JdbcPagingItemReaderBuilder<User>()
+                .dataSource(dataSource)
+                .selectClause("select d_user_id")
+                .fromClause(
+                        "from (  " +
+                                "select distinct( " + RatingMigration.Columns.USER_ID_COLUMN + ") as d_user_id from " + RatingMigration.TABLE + ") t ")
+                .whereClause("where d_user_id is not null ")
+                .sortKeys(new HashMap<String, Order>() {{
+                    put("d_user_id", Order.ASCENDING);
+                }})
+                .rowMapper((resultSet, i) -> {
+                    User user = new User();
+                    user.setId(resultSet.getString("d_user_id"));
+                    user.setName(user.getId());
+                    user.setEmail(user.getId());
+                    user.setEmailVerified(true);
+                    Authority userAuthority = new Authority();
+                    userAuthority.setId("0-3");
+                    Set<Authority> auths = new HashSet<>();
+                    auths.add(userAuthority);
+                    user.setAuthorities(auths);
+                    return user;
+                })
+                .saveState(false)
+                .build()
+                ;
+    }
+
+    @Bean
+    public ItemProcessor<User, User> userDoNothingProcessor() {
+        return new PassThroughItemProcessor<>();
+    }
+
+    @Bean
+    public MongoItemWriter<User> userMongoItemWriter(MongoTemplate entityManagerFactory) {
+        MongoItemWriter<User> writer = new MongoItemWriter<>();
+        writer.setTemplate(entityManagerFactory);
         return writer;
 
     }
 
     @Bean
-    public Step stepRatingCSVLoadToMigrationTable(JpaItemWriter<RatingMigration> jpaItemWriter, TaskExecutor springBatchTaskExecutor, FlatFileItemReader<RatingMigration> ratingCsvToRatingMigrationReader, ItemProcessor<RatingMigration, RatingMigration> ratingDoNothingProcessor) {
-        return stepBuilderFactory.get("stepRatingCSVLoadToMigrationTable")
-                .<RatingMigration, RatingMigration>chunk(5000)
-                .reader(ratingCsvToRatingMigrationReader)
-                .processor(ratingDoNothingProcessor)
-                .writer(jpaItemWriter)
+    public Step stepRatingMigrationLoadToUserTable(MongoItemWriter<User> userMongoItemWriter, TaskExecutor springBatchTaskExecutor, JdbcPagingItemReader<User> ratingMigrationToUserReader, ItemProcessor<User, User> userDoNothingProcessor) {
+        return stepBuilderFactory.get("stepRatingMigrationLoadToUserTable")
+                .<User, User>chunk(5000)
+                .reader(ratingMigrationToUserReader)
+                .processor(userDoNothingProcessor)
+                .writer(userMongoItemWriter)
+                .taskExecutor(springBatchTaskExecutor).throttleLimit(20)
+                .build();
+    }
+
+    @Bean
+    public JdbcPagingItemReader<Comment> ratingMigrationToCommentReader(DataSource dataSource, BookRepository repository) {
+        return new JdbcPagingItemReaderBuilder<Comment>()
+                .dataSource(dataSource)
+                .selectClause(" select " +
+                        "  " + RatingMigration.ID_COLUMN + " as " + Comment.ID_COLUMN +
+                        ", " + RatingMigration.Columns.BOOK_ID_COLUMN + " as " + Book.Columns.WORK_ID +
+                        ", " + RatingMigration.Columns.USER_ID_COLUMN + " as " + Comment.CREATED_BY_COLUMN +
+                        ", " + RatingMigration.Columns.RATING_COLUMN + " as " + Comment.Columns.RATING_COLUMN)
+                .fromClause(
+                        " from " + RatingMigration.TABLE + " r ")
+                .sortKeys(new HashMap<String, Order>() {{
+                    put(RatingMigration.ID_COLUMN, Order.ASCENDING);
+                }})
+                .rowMapper((resultSet, i) -> {
+                    Comment comment = new Comment();
+                    comment.setId(resultSet.getString(Comment.ID_COLUMN));
+                    comment.setRating(resultSet.getString(Comment.Columns.RATING_COLUMN) == null ? null : resultSet.getInt(Comment.Columns.RATING_COLUMN));
+
+                    //ugly perfomance after migration to mongo due to no join could be done. Additional migration SAL table can be done
+                    Book book = repository.findOne(new BooleanBuilder().and(QBook.book.work.id.eq(resultSet.getString(Book.Columns.WORK_ID)))).orElse(null);
+                    comment.setBook(book);
+
+                    User user = new User();
+                    user.setId(resultSet.getString(Comment.CREATED_BY_COLUMN));
+                    comment.setCreatedBy(user);
+                    return comment;
+                })
+                .saveState(false)
+                .build()
+                ;
+    }
+
+    @Bean
+    public ItemProcessor<Comment, Comment> commentDoNothingProcessor() {
+        return new PassThroughItemProcessor<>();
+    }
+
+    @Bean
+    public MongoItemWriter<Comment> commentMongoItemWriter(MongoTemplate entityManagerFactory) {
+        MongoItemWriter<Comment> writer = new MongoItemWriter<>();
+        writer.setTemplate(entityManagerFactory);
+        return writer;
+
+    }
+
+    @Bean
+    public Step stepRatingMigrationLoadToCommentTable(MongoItemWriter<Comment> commentMongoItemWriter, TaskExecutor springBatchTaskExecutor, JdbcPagingItemReader<Comment> ratingMigrationToCommentReader, ItemProcessor<Comment, Comment> commentDoNothingProcessor) {
+        return stepBuilderFactory.get("stepRatingMigrationLoadToCommentTable")
+                .<Comment, Comment>chunk(5000)
+                .reader(ratingMigrationToCommentReader)
+                .processor(commentDoNothingProcessor)
+                .writer(commentMongoItemWriter)
                 .taskExecutor(springBatchTaskExecutor).throttleLimit(20)
                 .build();
     }
 
 
     @Bean
-    public Tasklet insertUserAndAuthoritiesFromRatingTasklet(DataSource dataSource) {
-        return (contribution, chunkContext) -> {
-            new JdbcTemplate(dataSource)
-                    .execute(
-                            "INSERT INTO " + User.TABLE +
-                                    " ( " + User.ID_COLUMN +
-                                    " , " + User.Columns.NAME_COLUMN +
-                                    " , " + User.Columns.EMAIL_COLUMN +
-                                    " , " + User.Columns.EMAIL_VERIFIED_COLUMN +
-                                    " ) " +
-                                    " select " +
-                                    "   DU.d_user_id " +
-                                    " , DU.d_user_id " +
-                                    " , DU.d_user_id " +
-                                    " , true         " +
-                                    " from (select distinct( " + RatingMigration.Columns.USER_ID_COLUMN + ") as d_user_id from " + RatingMigration.TABLE + ") DU; "
-                                    +
-                                    " INSERT INTO " + User.USER_AUTHORITY_JOIN_TABLE +
-                                    " ( " + User.USER_AUTHORITY_JOIN_TABLE_USER_FK_COLUMN +
-                                    " , " + User.USER_AUTHORITY_JOIN_TABLE_AUTHORITY_FK_COLUMN +
-                                    " ) " +
-                                    " select " +
-                                    "  DU.d_user_id " +
-                                    " ,(select max(  " + Authority.ID_COLUMN + ") " +
-                                    "          from  " + Authority.TABLE +
-                                    "          where " + Authority.NAME_COLUMN + " = '" + Authority.Roles.USER + "'" +
-                                    "  )" +
-                                    " from (select distinct( " + RatingMigration.Columns.USER_ID_COLUMN + ") as d_user_id from " + RatingMigration.TABLE + ") DU"
-                    );
-            return RepeatStatus.FINISHED;
-        };
-    }
-
-    @Bean
-    public Step stepRatingMigrationTableLoadToUserAndUserAuthorityDomainTable(Tasklet insertUserAndAuthoritiesFromRatingTasklet) {
-        return this.stepBuilderFactory.get("stepRatingMigrationTableLoadToUserAndUserAuthorityDomainTable")
-                .tasklet(insertUserAndAuthoritiesFromRatingTasklet)
-                .build();
-    }
-
-
-    @Bean
-    public Tasklet insertCommentFromRatingTasklet(DataSource dataSource) {
-        return (contribution, chunkContext) -> {
-            new JdbcTemplate(dataSource)
-                    .execute(
-                            "INSERT INTO " + Comment.TABLE +
-                                    "( " + Comment.ID_COLUMN +
-                                    ", " + Comment.Columns.BOOK_ID_COLUMN +
-                                    ", " + Comment.CREATED_BY_COLUMN +
-                                    ", " + Comment.Columns.RATING_COLUMN +
-                                    ") " +
-                                    " select " +
-                                    "  r." + RatingMigration.ID_COLUMN +
-                                    ", b." + Book.ID_COLUMN +
-                                    ", r." + RatingMigration.Columns.USER_ID_COLUMN +
-                                    ", r." + RatingMigration.Columns.RATING_COLUMN +
-                                    " from " + RatingMigration.TABLE + " r " +
-                                    " left join " + Book.TABLE + " b " + "on r." + RatingMigration.Columns.BOOK_ID_COLUMN + " = b." + Book.Columns.WORK_ID
-                    );
-            return RepeatStatus.FINISHED;
-        };
-    }
-
-    @Bean
-    public Step stepRatingMigrationTableLoadToCommentDomainTable(Tasklet insertCommentFromRatingTasklet) {
-        return this.stepBuilderFactory.get("stepRatingMigrationTableLoadToCommentDomainTable")
-                .tasklet(insertCommentFromRatingTasklet)
-                .build();
-    }
-
-
-    @Bean
-    public Job importUserAuthorityAndCommentsFromRatingJob(Step stepBookCSVLoadToMigrationTable, Step stepBookMigrationLoadToWorkWithoutBestBookId, Step stepBookMigrationLoadToBook, Step stepRatingCSVLoadToMigrationTable, Step stepRatingMigrationTableLoadToUserAndUserAuthorityDomainTable, Step stepRatingMigrationTableLoadToCommentDomainTable) {
+    public Job importUserAuthorityAndCommentsFromRatingJob(Step stepInsertWorkWithoutBestBookIdFromBookMigration, Step stepInsertBookFromBookMigration, Step stepRatingCSVLoadToMigrationTable, Step stepRatingMigrationLoadToUserTable, Step stepRatingMigrationLoadToCommentTable) {
         return jobBuilderFactory.get("migrationFromKaggleDataSetJob")
                 .incrementer(new RunIdIncrementer())
-                .start(stepBookCSVLoadToMigrationTable)
-                .next(stepBookMigrationLoadToWorkWithoutBestBookId)
-                .next(stepBookMigrationLoadToBook)
+                .start(stepInsertWorkWithoutBestBookIdFromBookMigration)
+                .next(stepInsertBookFromBookMigration)
                 .next(stepRatingCSVLoadToMigrationTable)
-                .next(stepRatingMigrationTableLoadToUserAndUserAuthorityDomainTable)
-                .next(stepRatingMigrationTableLoadToCommentDomainTable)
+                .next(stepRatingMigrationLoadToUserTable)
+                .next(stepRatingMigrationLoadToCommentTable)
                 .build();
     }
 

@@ -6,15 +6,15 @@ import lombok.Setter;
 import lombok.ToString;
 import net.jcip.annotations.NotThreadSafe;
 import org.hibernate.annotations.Formula;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
-@NotThreadSafe
-@Entity
-@Table(name = Lang.TABLE, indexes = {@Index(columnList = "CODE")})
+@Document(collection = Lang.TABLE)
 @Getter
 @Setter
 @ToString(callSuper = true)
@@ -25,6 +25,6 @@ public class Lang extends GenericAbstractPersistentAuditingObject<User> {
     @Formula("NULL")
     private String q;
 
-    @Column(name = NAME_COLUMN, nullable = false)
+    @Field(NAME_COLUMN)
     private String code;
 }

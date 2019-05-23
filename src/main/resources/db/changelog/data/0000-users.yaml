@@ -2,8 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 0000-users-test-data
       author: iborisenko
-
-
+      context: test
       runOnChange: true
       loadUpdateData:
         primaryKey: id

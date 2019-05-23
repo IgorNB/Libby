@@ -93,7 +93,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @Transactional
+
     public void testAuthorize() throws Exception {
         User user = new User();
         user.setName("user-jwt-controller");
@@ -105,7 +105,7 @@ public class AuthControllerTest {
         Authority authority = authorityRepository.findAll(where).iterator().next();
         user.setAuthorities(new HashSet<>(Arrays.asList(authority)));
 
-        userRepository.saveAndFlush(user);
+        userRepository.saveAndFind(user);
 
         LoginRequestDto login = new LoginRequestDto();
         login.setEmail("user-jwt-controller@example.com");

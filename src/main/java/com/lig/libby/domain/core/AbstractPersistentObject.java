@@ -31,12 +31,14 @@ public abstract class AbstractPersistentObject implements PersistentObject {
     public static final String ID_COLUMN = "ID";
     public static final String VERSION_COLUMN = "VERSION";
 
+    @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(generator = "assigned")
     @GenericGenerator(name = "assigned", strategy = "org.hibernate.id.Assigned")
     @Column(name = ID_COLUMN, nullable = false)
     protected @NonNull String id;
 
+    @org.springframework.data.annotation.Version
     @Version
     @Column(name = VERSION_COLUMN, nullable = false)
     @ColumnDefault("0")

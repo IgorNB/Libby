@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -76,7 +77,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @Transactional
+
     public void findOneTest() throws Exception {
         TestUtil.setAuthenticationForCurrentThreadLocal(authenticationManager, "admin@localhost", "admin");
         User user = TestUtil.createAndSaveUserWithAdminRole(passwordEncoder, authorityRepository, userRepository);
@@ -105,8 +106,9 @@ public class UserControllerTest {
     }
 
 
-    @Transactional
+
     @TestFactory
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     Stream<DynamicTest> dynamicFindAllTest() {
         List<TestArgs<User, String, String, List<User>, String, String, String>> inputList;
         {
@@ -171,7 +173,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @Transactional
+
     void create() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
 
@@ -185,6 +187,7 @@ public class UserControllerTest {
         User userTestCreateDtoRequest = (User) SerializationUtils.clone(createdUser);
         userTestCreateDtoRequest.setEmail("testCreate-email");
         userTestCreateDtoRequest.setId("");
+        userTestCreateDtoRequest.setVersion(null);
 
 
         User responseDto = TestUtil.postDtoByUser(admin, "admin", userTestCreateDtoRequest, "/users/", mockMvc, User.class);
@@ -210,7 +213,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @Transactional
+
     void update() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
 
@@ -234,7 +237,7 @@ public class UserControllerTest {
 
 
     @Test
-    @Transactional
+
     void delete() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
         User userTest = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);

@@ -27,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -92,7 +93,7 @@ public class TaskPublicControllerTest {
     }
 
     @Test
-    @Transactional
+
     public void findOneTest() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
         Lang lang = TestUtil.createAndSaveLang(langRepository);
@@ -135,8 +136,9 @@ public class TaskPublicControllerTest {
     }
 
 
-    @Transactional
+
     @TestFactory
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     Stream<DynamicTest> dynamicFindAllTest() {
         List<TestArgs<User, String, String, List<Task>, String, String, String>> inputList;
         {
@@ -209,7 +211,7 @@ public class TaskPublicControllerTest {
 
 
     @Test
-    @Transactional
+
     void create() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
         Lang lang = TestUtil.createAndSaveLang(langRepository);
@@ -257,7 +259,7 @@ public class TaskPublicControllerTest {
     }
 
     @Test
-    @Transactional
+
     void update() throws Exception {
         User admin = userRepository.findByEmail("admin@localhost").orElse(null);
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
@@ -324,7 +326,7 @@ public class TaskPublicControllerTest {
 
 
     @Test
-    @Transactional
+
     void delete() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
         Lang lang = TestUtil.createAndSaveLang(langRepository);

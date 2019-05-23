@@ -30,6 +30,9 @@ migrationFromKaggleDataSetJob:
   ratingSkipLines: 950000
 
 spring:
+  data:
+    mongodb:
+      database: libby
   batch:
     job:
       enabled: true

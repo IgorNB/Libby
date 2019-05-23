@@ -8,12 +8,14 @@ import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
 import net.jcip.annotations.NotThreadSafe;
 import org.hibernate.annotations.Formula;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.*;
 
+@Document(collection = Comment.TABLE)
 @NotThreadSafe
-@Entity
-@Table(name = Comment.TABLE)
 @Getter
 @Setter
 @ToString(callSuper = true)
@@ -22,19 +24,20 @@ public class Comment extends GenericAbstractPersistentAuditingObject<User> {
     public static final String TABLE = "COMMENT";
     @Formula("NULL")
     private String q;
-    @Column(name = Columns.RATING_COLUMN, nullable = true)
+
+    @Field(Columns.RATING_COLUMN)
     private Integer rating;
-    @Column(name = Columns.BODY_COLUMN, nullable = true)
+
+    @Field(Columns.BODY_COLUMN)
     private String body;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToOne()
-    @JoinColumn(name = Columns.BOOK_ID_COLUMN, nullable = false)
+
+    @DBRef
     private Book book;
 
     public static final class Columns {
-        public static final String RATING_COLUMN = "RATING";
-        public static final String BODY_COLUMN = "BODY";
-        public static final String BOOK_ID_COLUMN = "BOOK_ID";
+        public static final String RATING_COLUMN = "rating";
+        public static final String BODY_COLUMN = "body";
+        public static final String BOOK_ID_COLUMN = "bookId";
 
         private Columns() {
         }

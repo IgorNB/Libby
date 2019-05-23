@@ -1,7 +1,9 @@
 package com.lig.libby.service;
 
 import com.lig.libby.domain.Book;
+import com.lig.libby.domain.QBook;
 import com.lig.libby.repository.BookRepository;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import lombok.NonNull;
 import net.jcip.annotations.ThreadSafe;
@@ -28,19 +30,22 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public @NonNull Page<Book> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails) {
+        if(predicate == null) {
+            predicate = new BooleanBuilder().and(QBook.book.id.isNotNull());
+        }
         return bookRepository.findAll(predicate, pageable);
     }
 
     @NonNull
     @Override
     public Book update(@NonNull Book entity, @NonNull UserDetails userDetails) {
-        return bookRepository.save(entity);
+        return bookRepository.saveAndFind(entity);
     }
 
     @NonNull
     @Override
     public Book create(@NonNull Book entity, @NonNull UserDetails userDetails) {
-        return bookRepository.save(entity);
+        return bookRepository.saveAndFind(entity);
     }
 
     @Override

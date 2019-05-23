@@ -8,6 +8,9 @@ import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
 import net.jcip.annotations.NotThreadSafe;
 import org.hibernate.annotations.Formula;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -17,18 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+@Document(collection = Task.TABLE)
 @NotThreadSafe
-@Entity
-@Table(name = Task.TABLE,
-        indexes = {@Index(columnList = "book_name"),
-                @Index(columnList = "book_authors"),
-                @Index(columnList = "book_title"),
-                @Index(columnList = "book_original_publication_year"),
-                @Index(columnList = "book_original_title"),
-                @Index(columnList = "book_isbn"),
-                @Index(columnList = "book_isbn13")
-        }
-)
 @Getter
 @Setter
 @ToString(callSuper = true)
@@ -41,46 +35,48 @@ public class Task extends GenericAbstractPersistentAuditingObject<User> {
     private String command;
     @Transient
     private List<String> availableCommands;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToOne()
-    @JoinColumn(name = Columns.ASSIGNEE_USER_ID, nullable = false)
+
+    @DBRef
     private User assignee;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToOne()
-    @JoinColumn(name = Columns.BOOK_ID)
+    @DBRef
     private Book book;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @Field(Columns.WORKFLOW_STEP)
     @Enumerated(EnumType.STRING)
-    @Column(name = Columns.WORKFLOW_STEP, length = 25, nullable = false)
     private WorkflowStepEnum workflowStep;
-    @Column(name = Columns.BOOK_NAME, nullable = true)
+
+    @Field(Columns.BOOK_NAME)
     private String bookName;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToOne()
-    @JoinColumn(name = Columns.BOOK_WORK_ID)
+
+    @DBRef
     private Work bookWork;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToOne()
-    @JoinColumn(name = Columns.BOOK_LANG_ID)
+
+    @DBRef
     private Lang bookLang;
-    @Column(name = Columns.BOOK_ISBN, nullable = true)
+
+    @Field(Columns.BOOK_ISBN)
     private String bookIsbn;
 
-    @Column(name = Columns.BOOK_ISBN_13, nullable = true)
+    @Field(Columns.BOOK_ISBN_13)
     private BigInteger bookIsbn13;
-    @Column(name = Columns.BOOK_AUTHORS, nullable = true, length = 1000)
+
+    @Field(Columns.BOOK_AUTHORS)
     private String bookAuthors;
-    @Column(name = Columns.BOOK_ORIGINAL_PUBLICATION_YEAR, nullable = true)
+
+    @Field(Columns.BOOK_ORIGINAL_PUBLICATION_YEAR)
     private Integer bookOriginalPublicationYear;
-    @Column(name = Columns.BOOK_ORIGINAL_TITLE, nullable = true)
+
+    @Field(Columns.BOOK_ORIGINAL_TITLE)
     private String bookOriginalTitle;
-    @Column(name = Columns.BOOK_TITLE, nullable = true)
+
+    @Field(Columns.BOOK_TITLE)
     private String bookTitle;
-    @Column(name = Columns.BOOK_IMAGE_URL, nullable = true)
+
+    @Field(Columns.BOOK_IMAGE_URL)
     private String bookImageUrl;
-    @Column(name = Columns.BOOK_SMALL_IMAGE_URL, nullable = true)
+
+    @Field(Columns.BOOK_SMALL_IMAGE_URL)
     private String bookSmallImageUrl;
 
     public enum WorkflowStepEnum {
@@ -126,20 +122,20 @@ public class Task extends GenericAbstractPersistentAuditingObject<User> {
     }
 
     public static final class Columns {
-        public static final String ASSIGNEE_USER_ID = "ASSIGNEE_USER_ID";
-        public static final String WORKFLOW_STEP = "WORKFLOW_STEP";
-        public static final String BOOK_ISBN = "book_isbn";
-        public static final String BOOK_ISBN_13 = "book_isbn13";
-        public static final String BOOK_AUTHORS = "book_authors";
-        public static final String BOOK_ORIGINAL_PUBLICATION_YEAR = "book_original_publication_year";
-        public static final String BOOK_ORIGINAL_TITLE = "book_original_title";
-        public static final String BOOK_TITLE = "book_title";
-        public static final String BOOK_IMAGE_URL = "book_image_url";
-        public static final String BOOK_SMALL_IMAGE_URL = "book_small_image_url";
-        public static final String BOOK_NAME = "BOOK_NAME";
-        public static final String BOOK_LANG_ID = "BOOK_LANG_ID";
-        public static final String BOOK_WORK_ID = "BOOK_WORK_ID";
-        public static final String BOOK_ID = "BOOK_ID";
+        public static final String ASSIGNEE_USER_ID = "assigneeUserId";
+        public static final String WORKFLOW_STEP = "workflowStep";
+        public static final String BOOK_ISBN = "bookIsbn";
+        public static final String BOOK_ISBN_13 = "bookIsbn13";
+        public static final String BOOK_AUTHORS = "bookAuthors";
+        public static final String BOOK_ORIGINAL_PUBLICATION_YEAR = "bookOriginalPublicationYear";
+        public static final String BOOK_ORIGINAL_TITLE = "bookOriginalTitle";
+        public static final String BOOK_TITLE = "bookTitle";
+        public static final String BOOK_IMAGE_URL = "bookImageUrl";
+        public static final String BOOK_SMALL_IMAGE_URL = "bookSmallImageUrl";
+        public static final String BOOK_NAME = "bookName";
+        public static final String BOOK_LANG_ID = "bookLangId";
+        public static final String BOOK_WORK_ID = "bookWorkId";
+        public static final String BOOK_ID = "bookId";
         private Columns() {
             throw new IllegalStateException("Utility class");
         }

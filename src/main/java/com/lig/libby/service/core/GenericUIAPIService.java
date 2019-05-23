@@ -13,10 +13,10 @@ public interface GenericUIAPIService<E extends PersistentObject, I> {
 
     @NonNull Page<E> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails);
 
-    @Transactional
+
     @NonNull E update(@NonNull E entity, @NonNull UserDetails userDetails);
 
-    @Transactional
+
     @NonNull E create(@NonNull E entity, @NonNull UserDetails userDetails);
 
     void deleteById(@NonNull String id);

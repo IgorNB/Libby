@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -70,7 +71,7 @@ public class UserPublicControllerTest {
     }
 
     @Test
-    @Transactional
+
     public void findOneTest() throws Exception {
         TestUtil.setAuthenticationForCurrentThreadLocal(authenticationManager, "admin@localhost", "admin");
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
@@ -92,8 +93,9 @@ public class UserPublicControllerTest {
     }
 
 
-    @Transactional
+
     @TestFactory
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     Stream<DynamicTest> dynamicFindAllTest() {
         List<TestArgs<User, String, String, List<User>, String, String, String>> inputList;
         {
