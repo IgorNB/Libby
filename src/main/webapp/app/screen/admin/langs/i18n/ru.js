@@ -1,14 +1,11 @@
 export const langs = {
     name: 'Язык |||| Языки',
-    validation: {
-    },
-    list: {
-    },
+    validation: {},
+    list: {},
     edit: {
         title: 'Язык',
     },
-    action: {
-    },
+    action: {},
     fields: {
         "id": "идентификатор",
         "version": "версия",

@@ -6,7 +6,7 @@ import AvatarField from "../../../core/field/AvatarField"; // eslint-disable-lin
 const UserEdit = props => (
     <Edit {...props}>
         <SimpleForm>
-             <DisabledInput source="id" label="resources.langs.fields.id"/>
+            <DisabledInput source="id" label="resources.langs.fields.id"/>
             <TextInput source="id" label="resources.users.fields.id"/>
             <TextInput source="name" label="resources.users.fields.name"/>
             <NumberInput source="version" label="resources.users.fields.version"/>

@@ -1,37 +1,37 @@
 databaseChangeLog:
-- changeSet:
-    id: 1558546852769-1
-    author: iborisenko (generated)
-    changes:
-    - createTable:
-        columns:
-        - column:
-            constraints:
-              nullable: false
-            name: id
-            type: VARCHAR(255)
-        - column:
-            constraints:
-              nullable: false
-            defaultValueNumeric: 0
-            name: version
-            type: INT
-        - column:
-            name: book_id
-            type: VARCHAR(255)
-        - column:
-            name: rating
-            type: INT
-        - column:
-            name: user_id
-            type: VARCHAR(255)
-        tableName: rating_migration
-- changeSet:
-    id: 1558546852769-2
-    author: iborisenko (generated)
-    changes:
-    - addPrimaryKey:
-        columnNames: id
-        constraintName: rating_migrationPK
-        tableName: rating_migration
+  - changeSet:
+      id: 1558546852769-1
+      author: iborisenko (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: id
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueNumeric: 0
+                  name: version
+                  type: INT
+              - column:
+                  name: book_id
+                  type: VARCHAR(255)
+              - column:
+                  name: rating
+                  type: INT
+              - column:
+                  name: user_id
+                  type: VARCHAR(255)
+            tableName: rating_migration
+  - changeSet:
+      id: 1558546852769-2
+      author: iborisenko (generated)
+      changes:
+        - addPrimaryKey:
+            columnNames: id
+            constraintName: rating_migrationPK
+            tableName: rating_migration
 

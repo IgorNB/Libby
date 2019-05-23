@@ -6,7 +6,6 @@ import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface GenericUIAPIService<E extends PersistentObject, I> {
     E findById(@NonNull I id, @NonNull UserDetails userDetails);

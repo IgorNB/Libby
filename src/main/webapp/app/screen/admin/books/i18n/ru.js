@@ -1,7 +1,6 @@
 export const books = {
         name: 'Книга |||| Книги',
-        validation: {
-        },
+        validation: {},
         list: {},
         edit: {
             title: 'Книга',

@@ -27,7 +27,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
@@ -95,7 +94,6 @@ public class LangPublicControllerTest {
                 () -> assertThat(assertResponce).isEqualToComparingFieldByField(response)
         );
     }
-
 
 
     @TestFactory

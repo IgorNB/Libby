@@ -30,7 +30,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public @NonNull Page<Book> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails) {
-        if(predicate == null) {
+        if (predicate == null) {
             predicate = new BooleanBuilder().and(QBook.book.id.isNotNull());
         }
         return bookRepository.findAll(predicate, pageable);

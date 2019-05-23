@@ -1,7 +1,6 @@
 export const comments = {
         name: 'Comment |||| Comments',
-        validation: {
-        },
+        validation: {},
         list: {
             about: 'book ',
         },
@@ -11,8 +10,7 @@ export const comments = {
         action: {
             linkToRelatedBook: "related book"
         },
-        referenceManyFields: {
-        },
+        referenceManyFields: {},
         fields: {
             "id": "id",
             "version": "version",

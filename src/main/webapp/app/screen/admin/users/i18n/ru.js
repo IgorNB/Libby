@@ -1,14 +1,11 @@
 export const users = {
     name: 'Пользователь |||| Пользователи',
-    validation: {
-    },
-    list: {
-    },
+    validation: {},
+    list: {},
     edit: {
         title: 'Пользователь',
     },
-    action: {
-    },
+    action: {},
     fields: {
         "id": "идентификатор",
         "version": "версия",

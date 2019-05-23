@@ -1,14 +1,11 @@
 export const langs = {
     name: 'Language |||| Languages',
-    validation: {
-    },
-    list: {
-    },
+    validation: {},
+    list: {},
     edit: {
         title: 'Language',
     },
-    action: {
-    },
+    action: {},
     fields: {
         "id": "id",
         "version": "version",

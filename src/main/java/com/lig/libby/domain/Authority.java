@@ -8,12 +8,6 @@ import net.jcip.annotations.NotThreadSafe;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
-
-import static com.lig.libby.domain.Authority.NAME_COLUMN;
 @Document(collection = Authority.TABLE)
 @NotThreadSafe
 @Getter

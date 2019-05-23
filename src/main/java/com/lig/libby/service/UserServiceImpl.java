@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public @NonNull Page<User> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails) {
-        if(predicate == null) {
+        if (predicate == null) {
             predicate = new BooleanBuilder().and(QUser.user.id.isNotNull());
         }
         return userRepository.findAll(predicate, pageable);

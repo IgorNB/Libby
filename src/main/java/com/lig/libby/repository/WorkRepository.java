@@ -1,11 +1,9 @@
 package com.lig.libby.repository;
 
 import com.lig.libby.domain.QWork;
-import com.lig.libby.domain.User;
 import com.lig.libby.domain.Work;
 import com.lig.libby.repository.core.GenericUiApiRepository;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;

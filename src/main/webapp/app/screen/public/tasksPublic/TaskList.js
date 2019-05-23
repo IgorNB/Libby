@@ -17,13 +17,14 @@ import AvatarField from "../../../core/field/AvatarField";
 
 
 const TaskFilter = props => (
-        <Filter {...props}>
-            <SearchInput source="q" alwaysOn label="resources.tasksPublic.fields.q"/>
-            <TaskStatusColor source="workflowStep" isInput = {true} alwaysOn label="resources.tasksPublic.fields.workflowStep"/>
-            <TextInput source="bookTitle" alwaysOn label="resources.tasksPublic.fields.bookTitle"/>
-            <TextInput source="bookAuthors" alwaysOn label="resources.tasksPublic.fields.bookAuthors"/>
-            <TextInput source="id" label="resources.tasksPublic.fields.id"/>
-        </Filter>
+    <Filter {...props}>
+        <SearchInput source="q" alwaysOn label="resources.tasksPublic.fields.q"/>
+        <TaskStatusColor source="workflowStep" isInput={true} alwaysOn
+                         label="resources.tasksPublic.fields.workflowStep"/>
+        <TextInput source="bookTitle" alwaysOn label="resources.tasksPublic.fields.bookTitle"/>
+        <TextInput source="bookAuthors" alwaysOn label="resources.tasksPublic.fields.bookAuthors"/>
+        <TextInput source="id" label="resources.tasksPublic.fields.id"/>
+    </Filter>
 );
 
 const styles = theme => ({
@@ -61,15 +62,20 @@ const TaskList = withStyles(styles)(({classes, ...props}) => (
                 <Datagrid rowClick={rowClick}>
                     <TextField source="assignee.name" label="resources.tasksPublic.fields.assignee.name"/>
                     <TaskStatusColor source="workflowStep" label="resources.tasksPublic.fields.workflowStep"/>
-                    <AvatarField size={40} source="bookSmallImageUrl" label="resources.tasksPublic.fields.bookSmallImageUrl"/>
+                    <AvatarField size={40} source="bookSmallImageUrl"
+                                 label="resources.tasksPublic.fields.bookSmallImageUrl"/>
                     <TextField source="bookTitle" label="resources.tasksPublic.fields.bookTitle"/>
                     <TextField source="bookAuthors" label="resources.tasksPublic.fields.bookAuthors"/>
-                    <NumberField source="bookOriginalPublicationYear" label="resources.tasksPublic.fields.bookOriginalPublicationYear"/>
-                    <TextField source="bookIsbn" label="resources.tasksPublic.fields.bookIsbn" cellClassName={classes.title}/>
-                    <TextField source="bookIsbn13" label="resources.tasksPublic.fields.bookIsbn13" cellClassName={classes.title}/>
-                    <TextField source="bookOriginalTitle" label="resources.tasksPublic.fields.bookOriginalTitle" />
-                    <ReferenceField label="Lang" label="resources.tasksPublic.fields.bookLang.code" source="bookLang.id" reference="langsPublic" allowEmpty>
-                        <TextField source="code" />
+                    <NumberField source="bookOriginalPublicationYear"
+                                 label="resources.tasksPublic.fields.bookOriginalPublicationYear"/>
+                    <TextField source="bookIsbn" label="resources.tasksPublic.fields.bookIsbn"
+                               cellClassName={classes.title}/>
+                    <TextField source="bookIsbn13" label="resources.tasksPublic.fields.bookIsbn13"
+                               cellClassName={classes.title}/>
+                    <TextField source="bookOriginalTitle" label="resources.tasksPublic.fields.bookOriginalTitle"/>
+                    <ReferenceField label="Lang" label="resources.tasksPublic.fields.bookLang.code" source="bookLang.id"
+                                    reference="langsPublic" allowEmpty>
+                        <TextField source="code"/>
                     </ReferenceField>
                     <TextField source="id" label="resources.tasksPublic.fields.id"/>
                 </Datagrid>

@@ -5,8 +5,7 @@ export const tasksPublic = {
         yearFormat: "Проверите формат года (от 0 до 3000). Пример: 2019",
         ISBN13Format: "Проверьте формат ISBN 13. Пример: 9783836221191"
     },
-    list: {
-    },
+    list: {},
     edit: {
         title: 'Моя книга',
         taskFieldGroup: 'Задача',

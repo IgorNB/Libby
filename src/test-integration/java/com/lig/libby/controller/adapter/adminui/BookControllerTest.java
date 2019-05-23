@@ -28,7 +28,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
@@ -124,7 +123,6 @@ public class BookControllerTest {
     }
 
 
-
     @TestFactory
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     Stream<DynamicTest> dynamicFindAllTest() {
@@ -187,7 +185,6 @@ public class BookControllerTest {
 
 
     @Test
-
     void create() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
         Lang lang = TestUtil.createAndSaveLang(langRepository);
@@ -231,7 +228,6 @@ public class BookControllerTest {
     }
 
     @Test
-
     void update() throws Exception {
 
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
@@ -258,7 +254,6 @@ public class BookControllerTest {
 
 
     @Test
-
     void delete() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
         Lang lang = TestUtil.createAndSaveLang(langRepository);

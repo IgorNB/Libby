@@ -12,11 +12,9 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @ThreadSafe
@@ -102,7 +100,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public @NonNull Page<Task> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails) {
-        if(predicate == null) {
+        if (predicate == null) {
             predicate = new BooleanBuilder().and(QTask.task.id.isNotNull());
         }
 

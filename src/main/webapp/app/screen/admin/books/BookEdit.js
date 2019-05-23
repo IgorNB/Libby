@@ -52,10 +52,10 @@ const validateYear = [isYearValidation];
 const validateUrl = [isUrlValidation];
 
 
-const BookEdit =({ translate, classes, ...props }) =>  (
-    <Edit undoable={false}  title={<BookTitle/>} {...props}>
+const BookEdit = ({translate, classes, ...props}) => (
+    <Edit undoable={false} title={<BookTitle/>} {...props}>
         <SimpleForm toolbar={<CustomToolbar/>} defaultValue={{average_note: 0}}>
-            <Grid container direction="row" spacing={32} >
+            <Grid container direction="row" spacing={32}>
                 <Grid item>
                     <DisabledInput source="id" style={{width: "400px"}} label="resources.books.fields.id"/>
                 </Grid>
@@ -68,8 +68,7 @@ const BookEdit =({ translate, classes, ...props }) =>  (
             </Grid>
 
 
-
-            <Grid container direction="row" spacing={32} >
+            <Grid container direction="row" spacing={32}>
                 <Grid item xs={12}>
                 </Grid>
                 <Grid item xs={12}>
@@ -78,13 +77,15 @@ const BookEdit =({ translate, classes, ...props }) =>  (
             <Typography component="h2" variant="h1" color="inherit" align="left">
                 {translate("resources.books.edit.bookFieldGroup")}
             </Typography>
-            <Grid container direction="row" spacing={32} >
+            <Grid container direction="row" spacing={32}>
                 <Grid item>
-                    <TextInput  autoFocus source="title" validate={required()} resettable style={{width: "400px"}} label="resources.books.fields.title"/>
+                    <TextInput autoFocus source="title" validate={required()} resettable style={{width: "400px"}}
+                               label="resources.books.fields.title"/>
                 </Grid>
 
                 <Grid item>
-                    <TextInput source="authors" validate={required()} style={{width: "400px"}} label="resources.books.fields.authors"/>
+                    <TextInput source="authors" validate={required()} style={{width: "400px"}}
+                               label="resources.books.fields.authors"/>
                 </Grid>
             </Grid>
 
@@ -92,13 +93,15 @@ const BookEdit =({ translate, classes, ...props }) =>  (
 
                 <Grid item>
                     <FormDataConsumer>
-                        {({ formData, ...rest }) =>
-                            <AvatarField size={130} source="smallImageUrl" record={formData} label="resources.books.fields.smallImageUrl"/>
+                        {({formData, ...rest}) =>
+                            <AvatarField size={130} source="smallImageUrl" record={formData}
+                                         label="resources.books.fields.smallImageUrl"/>
                         }
                     </FormDataConsumer>
                 </Grid>
                 <Grid item>
-                    <TextInput source="smallImageUrl" style={{width: "240px"}} validate={validateUrl} label="resources.books.fields.smallImageUrl"/>
+                    <TextInput source="smallImageUrl" style={{width: "240px"}} validate={validateUrl}
+                               label="resources.books.fields.smallImageUrl"/>
                 </Grid>
                 <Grid item>
                     <RichTextInput source="name" label="resources.books.fields.Name"/>
@@ -107,11 +110,13 @@ const BookEdit =({ translate, classes, ...props }) =>  (
 
             <Grid container direction="row" spacing={32}>
                 <Grid item>
-                    <NumberInput source="originalPublicationYear" validate={validateYear} label="resources.books.fields.originalPublicationYear"/>
+                    <NumberInput source="originalPublicationYear" validate={validateYear}
+                                 label="resources.books.fields.originalPublicationYear"/>
                 </Grid>
                 <Grid item>
-                    <ReferenceInput label="Lang" source="lang.id" reference="langs" label="resources.books.fields.lang.code">
-                        <AutocompleteInput optionText="code" />
+                    <ReferenceInput label="Lang" source="lang.id" reference="langs"
+                                    label="resources.books.fields.lang.code">
+                        <AutocompleteInput optionText="code"/>
                     </ReferenceInput>
                 </Grid>
                 <Grid item>

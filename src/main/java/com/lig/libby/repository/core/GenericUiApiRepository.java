@@ -1,11 +1,8 @@
 package com.lig.libby.repository.core;
 
 import com.lig.libby.domain.core.PersistentObject;
-import com.querydsl.core.types.dsl.EntityPathBase;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 @Profile("never")
 @SuppressWarnings("squid:S2326")

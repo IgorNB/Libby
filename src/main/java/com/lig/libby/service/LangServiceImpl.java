@@ -30,7 +30,7 @@ public class LangServiceImpl implements LangService {
 
     @Override
     public @NonNull Page<Lang> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails) {
-        if(predicate == null) {
+        if (predicate == null) {
             predicate = new BooleanBuilder().and(QLang.lang.id.isNotNull());
         }
         return langRepository.findAll(predicate, pageable);

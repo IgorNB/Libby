@@ -5,12 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
-import net.jcip.annotations.NotThreadSafe;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigInteger;
 
 
@@ -69,6 +64,7 @@ public class BookMigration extends AbstractPersistentObject {
 
     public static final class Columns {
         public static final String BOOK_ID = "BOOK_ID";
+
         private Columns() {
         }
     }

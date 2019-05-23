@@ -98,7 +98,7 @@ public final class TestUtil {
         Authority authority = authorityRepository.findAll(where).iterator().next();
         user.setAuthorities(new HashSet<>(Arrays.asList(authority)));
 
-        return  userRepository.saveAndFind(user);
+        return userRepository.saveAndFind(user);
     }
 
     @NotNull

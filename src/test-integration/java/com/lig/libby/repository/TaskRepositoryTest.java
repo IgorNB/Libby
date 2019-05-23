@@ -21,8 +21,6 @@ import org.springframework.data.mongodb.repository.support.QuerydslMongoPredicat
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -151,17 +149,17 @@ class TaskRepositoryTest {
                     userNew.setEmail(userName + "@libby.com");
                     userNew.setProvider(Authority.AuthProvider.local);
                     em.save(userNew);
-                    final User user = em.findById(userNew.getId(),User.class);
+                    final User user = em.findById(userNew.getId(), User.class);
 
                     String langName = "test-lang-name" + UUID.randomUUID().toString().replaceAll("-", "");
                     Lang langNew = new Lang();
                     langNew.setCode(langName);
                     em.save(langNew);
-                    final Lang lang = em.findById(langNew.getId(),Lang.class);
+                    final Lang lang = em.findById(langNew.getId(), Lang.class);
 
                     Work workNew = new Work();
                     em.save(workNew);
-                    final Work work= em.findById(workNew.getId(),Work.class);
+                    final Work work = em.findById(workNew.getId(), Work.class);
                     String taskName = "test-task-name" + UUID.randomUUID().toString().replaceAll("-", "");
                     Task task = new Task();
                     task.setBookName(taskName);

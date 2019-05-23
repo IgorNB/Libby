@@ -2,7 +2,6 @@ package com.lig.libby.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lig.libby.domain.core.GenericAbstractPersistentAuditingObject;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,13 +11,12 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
-
-import static javax.persistence.FetchType.EAGER;
 
 @Document(collection = User.TABLE)
 @NotThreadSafe
@@ -62,7 +60,8 @@ public class User extends GenericAbstractPersistentAuditingObject<User> {
     @JsonIgnore
     private Set<Authority> authorities = new HashSet<>();
 
-    @SuppressWarnings("S2068") //here we skip sonar rule "Credentials should not be hard-coded" due to this is just name of DB column
+    @SuppressWarnings("S2068")
+    //here we skip sonar rule "Credentials should not be hard-coded" due to this is just name of DB column
     public static final class Columns {
         public static final String NAME_COLUMN = "name";
         public static final String EMAIL_COLUMN = "email";

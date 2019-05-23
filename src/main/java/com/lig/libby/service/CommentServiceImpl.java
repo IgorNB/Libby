@@ -30,7 +30,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public @NonNull Page<Comment> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails) {
-        if(predicate == null) {
+        if (predicate == null) {
             predicate = new BooleanBuilder().and(QComment.comment.id.isNotNull());
         }
         return commentRepository.findAll(predicate, pageable);

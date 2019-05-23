@@ -1,6 +1,5 @@
 package com.lig.libby.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lig.libby.domain.core.GenericAbstractPersistentAuditingObject;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Transient;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +137,7 @@ public class Task extends GenericAbstractPersistentAuditingObject<User> {
         public static final String BOOK_LANG_ID = "bookLangId";
         public static final String BOOK_WORK_ID = "bookWorkId";
         public static final String BOOK_ID = "bookId";
+
         private Columns() {
             throw new IllegalStateException("Utility class");
         }

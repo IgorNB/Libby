@@ -66,10 +66,12 @@ const BookList = withStyles(styles)(({classes, ...props}) => (
             }
             medium={
                 <Datagrid rowClick={rowClick}>
-                    <ImageField source="smallImageUrl" reference="usersPublic" label="resources.booksPublic.fields.smallImageUrl"/>
+                    <ImageField source="smallImageUrl" reference="usersPublic"
+                                label="resources.booksPublic.fields.smallImageUrl"/>
                     <TextField source="title" label="resources.booksPublic.fields.title"/>
                     <TextField source="authors" label="resources.booksPublic.fields.authors"/>
-                    <NumberField source="originalPublicationYear" label="resources.booksPublic.fields.originalPublicationYear"/>
+                    <NumberField source="originalPublicationYear"
+                                 label="resources.booksPublic.fields.originalPublicationYear"/>
                     <NumberField source="averageRating" label="resources.booksPublic.fields.averageRating"/>
                     <CompactListActionsToolbar cellClassName={classes.title} source="averageRating" label="">
                         <StarRatingField className={classes.toolbar}/>
@@ -77,8 +79,10 @@ const BookList = withStyles(styles)(({classes, ...props}) => (
 
                     <NumberField source="ratingsCount" label="resources.booksPublic.fields.ratingsCount"/>
                     <TextField source="isbn" cellClassName={classes.title} label="resources.booksPublic.fields.isbn"/>
-                    <TextField source="isbn13" cellClassName={classes.title} label="resources.booksPublic.fields.isbn13"/>
-                    <ReferenceField label="Lang" source="lang.id" reference="langsPublic" allowEmpty label="resources.booksPublic.fields.lang.code">
+                    <TextField source="isbn13" cellClassName={classes.title}
+                               label="resources.booksPublic.fields.isbn13"/>
+                    <ReferenceField label="Lang" source="lang.id" reference="langsPublic" allowEmpty
+                                    label="resources.booksPublic.fields.lang.code">
                         <TextField source="code"/>
                     </ReferenceField>
                     <TextField source="id" label="resources.booksPublic.fields.id"/>

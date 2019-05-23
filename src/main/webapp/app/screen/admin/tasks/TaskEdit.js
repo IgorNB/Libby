@@ -18,6 +18,19 @@ import {
 // eslint-disable-line import/no-unresolved
 // eslint-disable-line import/no-unresolved
 // eslint-disable-line import/no-unresolved
+// eslint-disable-line import/no-unresolved
+import TaskTitle from "./TaskTitle";
+import SaveWithCommandButton from "./TaskCommandButton";
+import Grid from "@material-ui/core/Grid";
+import RichTextInput from "ra-input-rich-text";
+import validator from "validator";
+import AvatarField from "../../../core/field/AvatarField";
+import Typography from '@material-ui/core/Typography';
+import TaskStatusColor from "../../../core/input/TaskStatusColor";
+// eslint-disable-line import/no-unresolved
+// eslint-disable-line import/no-unresolved
+// eslint-disable-line import/no-unresolved
+// eslint-disable-line import/no-unresolved
 import TaskTitle from "./TaskTitle";
 import SaveWithCommandButton from "./TaskCommandButton";
 import Grid from "@material-ui/core/Grid";
@@ -71,20 +84,20 @@ const validateISBN13 = [isISBN13Validation];
 const validateYear = [isYearValidation];
 const validateUrl = [isUrlValidation];
 
-const LinkToRelatedBook = translate(({translate,record}) => (
+const LinkToRelatedBook = translate(({translate, record}) => (
     record.book != null ?
-    <Link to={record.book != null ? `/books/${record.book.id}/show` : '' } >
-        <Typography variant="caption" color="inherit" align="left">
-            {translate("resources.tasks.action.bookLink")}
-        </Typography>
-    </Link>
-   : <div></div>
+        <Link to={record.book != null ? `/books/${record.book.id}/show` : ''}>
+            <Typography variant="caption" color="inherit" align="left">
+                {translate("resources.tasks.action.bookLink")}
+            </Typography>
+        </Link>
+        : <div></div>
 ));
 
-const TaskEdit =({ translate, classes, ...props }) =>  (
-    <Edit undoable={false}  title={<TaskTitle/>} {...props}>
+const TaskEdit = ({translate, classes, ...props}) => (
+    <Edit undoable={false} title={<TaskTitle/>} {...props}>
         <SimpleForm toolbar={<CustomToolbar/>} defaultValue={{average_note: 0}}>
-            <Grid container direction="row" spacing={32} >
+            <Grid container direction="row" spacing={32}>
                 <Grid item>
                     <DisabledInput source="id" style={{width: "400px"}} label="resources.tasks.fields.id"/>
                 </Grid>
@@ -96,7 +109,7 @@ const TaskEdit =({ translate, classes, ...props }) =>  (
                 </Grid>
             </Grid>
 
-            <Grid container direction="row" spacing={32} >
+            <Grid container direction="row" spacing={32}>
                 <Grid item xs={12}>
                 </Grid>
                 <Grid item xs={12}>
@@ -106,14 +119,15 @@ const TaskEdit =({ translate, classes, ...props }) =>  (
             <Typography component="h2" variant="h1" color="inherit" align="left">
                 {translate("resources.tasks.edit.taskFieldGroup")}
             </Typography>
-            <TaskStatusColor disabled={true} isInput={true} {...props} source="workflowStep" label="resources.tasks.fields.workflowStep"/>
+            <TaskStatusColor disabled={true} isInput={true} {...props} source="workflowStep"
+                             label="resources.tasks.fields.workflowStep"/>
             <LinkToRelatedBook/>
-            <ReferenceInput source="assignee.id" reference="users" label="resources.tasks.fields.assignee.name" >
-                <AutocompleteInput optionText="name" />
+            <ReferenceInput source="assignee.id" reference="users" label="resources.tasks.fields.assignee.name">
+                <AutocompleteInput optionText="name"/>
             </ReferenceInput>
             <DisabledInput source="createdBy.name" label="resources.tasks.fields.createdBy.name"/>
 
-            <Grid container direction="row" spacing={32} >
+            <Grid container direction="row" spacing={32}>
                 <Grid item xs={12}>
                 </Grid>
                 <Grid item xs={12}>
@@ -122,13 +136,15 @@ const TaskEdit =({ translate, classes, ...props }) =>  (
             <Typography component="h2" variant="h1" color="inherit" align="left">
                 {translate("resources.tasks.edit.bookFieldGroup")}
             </Typography>
-            <Grid container direction="row" spacing={32} >
+            <Grid container direction="row" spacing={32}>
                 <Grid item>
-                    <TextInput  autoFocus source="bookTitle" validate={required()} resettable style={{width: "400px"}} label="resources.tasks.fields.bookTitle"/>
+                    <TextInput autoFocus source="bookTitle" validate={required()} resettable style={{width: "400px"}}
+                               label="resources.tasks.fields.bookTitle"/>
                 </Grid>
 
                 <Grid item>
-                    <TextInput source="bookAuthors" validate={required()} style={{width: "400px"}} label="resources.tasks.fields.bookAuthors"/>
+                    <TextInput source="bookAuthors" validate={required()} style={{width: "400px"}}
+                               label="resources.tasks.fields.bookAuthors"/>
                 </Grid>
             </Grid>
 
@@ -136,13 +152,15 @@ const TaskEdit =({ translate, classes, ...props }) =>  (
 
                 <Grid item>
                     <FormDataConsumer>
-                        {({ formData, ...rest }) =>
-                            <AvatarField size={130} source="bookSmallImageUrl" record={formData} label="resources.tasks.fields.bookSmallImageUrl"/>
+                        {({formData, ...rest}) =>
+                            <AvatarField size={130} source="bookSmallImageUrl" record={formData}
+                                         label="resources.tasks.fields.bookSmallImageUrl"/>
                         }
                     </FormDataConsumer>
                 </Grid>
                 <Grid item>
-                    <TextInput source="bookSmallImageUrl" style={{width: "240px"}} validate={validateUrl} label="resources.tasks.fields.bookSmallImageUrl"/>
+                    <TextInput source="bookSmallImageUrl" style={{width: "240px"}} validate={validateUrl}
+                               label="resources.tasks.fields.bookSmallImageUrl"/>
                 </Grid>
                 <Grid item>
                     <RichTextInput source="bookName" label="resources.tasks.fields.bookName"/>
@@ -151,11 +169,13 @@ const TaskEdit =({ translate, classes, ...props }) =>  (
 
             <Grid container direction="row" spacing={32}>
                 <Grid item>
-                    <NumberInput source="bookOriginalPublicationYear" validate={validateYear} label="resources.tasks.fields.bookOriginalPublicationYear"/>
+                    <NumberInput source="bookOriginalPublicationYear" validate={validateYear}
+                                 label="resources.tasks.fields.bookOriginalPublicationYear"/>
                 </Grid>
                 <Grid item>
-                    <ReferenceInput label="Lang" source="bookLang.id" reference="langs" label="resources.tasks.fields.bookLang.code">
-                        <AutocompleteInput optionText="code" />
+                    <ReferenceInput label="Lang" source="bookLang.id" reference="langs"
+                                    label="resources.tasks.fields.bookLang.code">
+                        <AutocompleteInput optionText="code"/>
                     </ReferenceInput>
                 </Grid>
                 <Grid item>
