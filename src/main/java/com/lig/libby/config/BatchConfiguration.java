@@ -36,10 +36,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Configuration
 @EnableBatchProcessing
@@ -241,6 +238,9 @@ public class BatchConfiguration {
 
     @Bean
     public JdbcPagingItemReader<User> ratingMigrationToUserReader(DataSource dataSource) {
+        Map<String, Order> sortKeys  = new HashMap<String, Order>();
+        sortKeys.put("d_user_id", Order.ASCENDING);
+
         return new JdbcPagingItemReaderBuilder<User>()
                 .dataSource(dataSource)
                 .selectClause("select d_user_id")
@@ -248,9 +248,7 @@ public class BatchConfiguration {
                         "from (  " +
                                 "select distinct( " + RatingMigration.Columns.USER_ID_COLUMN + ") as d_user_id from " + RatingMigration.TABLE + ") t ")
                 .whereClause("where d_user_id is not null ")
-                .sortKeys(new HashMap<String, Order>() {{
-                    put("d_user_id", Order.ASCENDING);
-                }})
+                .sortKeys(sortKeys)
                 .rowMapper((resultSet, i) -> {
                     User user = new User();
                     user.setId(resultSet.getString("d_user_id"));
@@ -295,6 +293,8 @@ public class BatchConfiguration {
 
     @Bean
     public JdbcPagingItemReader<Comment> ratingMigrationToCommentReader(DataSource dataSource, BookRepository repository) {
+        Map<String, Order> sortKeys = new HashMap<>();
+        sortKeys.put(RatingMigration.ID_COLUMN, Order.ASCENDING);
         return new JdbcPagingItemReaderBuilder<Comment>()
                 .dataSource(dataSource)
                 .selectClause(" select " +
@@ -304,9 +304,7 @@ public class BatchConfiguration {
                         ", " + RatingMigration.Columns.RATING_COLUMN + " as " + Comment.Columns.RATING_COLUMN)
                 .fromClause(
                         " from " + RatingMigration.TABLE + " r ")
-                .sortKeys(new HashMap<String, Order>() {{
-                    put(RatingMigration.ID_COLUMN, Order.ASCENDING);
-                }})
+                .sortKeys(sortKeys)
                 .rowMapper((resultSet, i) -> {
                     Comment comment = new Comment();
                     comment.setId(resultSet.getString(Comment.ID_COLUMN));
