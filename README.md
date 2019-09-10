@@ -89,7 +89,14 @@ So, architectural unit tests check that
 
 ## Deployment
 
-Not available
+Single Hystrix App:
+```
+http://localhost:8090/hystrix
+```
+in opened page type:
+```
+http://localhost:8090/actuator/hystrix.stream
+```
 
 ## Development
 #### Controller

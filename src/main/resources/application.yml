@@ -1,18 +1,29 @@
 management:
+  endpoint:
+    health:
+      show-details: always
+    logfile:
+      external-file: 'rolling.log'
   endpoints:
     web:
       exposure:
         include: '*'
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 20000
 
 server:
   port: 8090
 
 logging:
-  pattern:
-  console:
+
   config: 'classpath:log4j2.properties'
-  level:
-    root: warn
+
 
 app:
   auth:
