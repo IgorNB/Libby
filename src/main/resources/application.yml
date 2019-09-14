@@ -31,6 +31,7 @@ migrationFromKaggleDataSetJob:
 
 spring:
   batch:
+    initialize-schema: always
     job:
       enabled: true
   security:
@@ -46,24 +47,39 @@ spring:
               - profile
 
   liquibase.enabled: true
+  profiles:
+    active:
+      - "springDataJpa"
+      - "H2"
+---
+spring:
+  profiles: "springDataJpa"
+
+---
+spring:
+  profiles: "postgres"
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/libby"
+    username: "postgres"
+    password: "pwd"
+    driver-class-name: "org.postgresql.Driver"
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+---
+spring:
+  profiles: "dockerCompose"
+  datasource:
+    url: "jdbc:postgresql://psql:5432/libby"
+    username: "postgres"
+    password: "pwd"
+    driver-class-name: "org.postgresql.Driver"
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+---
+spring:
+  profiles: "H2"
   datasource:
     url: "jdbc:h2:mem:testdb"
     username: "sa"
     password: ""
     driver-class-name: "org.h2.Driver"
-  profiles:
-    active:
-      - "springDataJpa"
-      - "shellDisabled"
----
-spring:
-  profiles: "springDataJpa"
----
-spring:
-  profiles: "springBatch"
----
-spring:
-  profiles: "shellDisabled"
-  shell:
-    interactive:
-      enabled: false

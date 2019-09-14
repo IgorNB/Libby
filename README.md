@@ -32,6 +32,17 @@ npm install
 ./mvnw
 npm start
 ```
+* Alternative is to start backend and Postgres DB in docker (please wait - it takes some time after container is up and before localhost:8090/actuator will start to response):
+```
+mvnw clean install -DskipTests
+docker-compose build
+docker-compose up -d
+```
+and to remove 
+```
+docker-compose stop
+docker-compose rm
+```
  * On Application start liquibase and Spring-Batch load data from csv files. This is real world book data from https://www.kaggle.com/bshirude2/goodreads-content-based-book-recommendation/data. Data has the following amount distribution: 
  ```
  Books ~10.000
@@ -88,8 +99,14 @@ So, architectural unit tests check that
 ```
 
 ## Deployment
-
-Not available
+Single Hystrix App Dashboard:
+```
+http://localhost:8090/hystrix
+```
+in opened page type:
+```
+http://localhost:8090/actuator/hystrix.stream
+```
 
 ## Development
 #### Controller
