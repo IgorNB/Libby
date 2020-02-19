@@ -5,6 +5,7 @@ import com.lig.libby.controller.adapter.adminui.mapper.save.TaskUiApiSaveMapper;
 import com.lig.libby.controller.core.uiadapter.GenricUIApiController;
 import com.lig.libby.domain.Authority;
 import com.lig.libby.domain.Task;
+import com.lig.libby.repository.TaskRepository;
 import com.lig.libby.service.TaskService;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ class TaskController implements GenricUIApiController<Task, String> {
     //Here we assume that Entity and DTO have:
     // 1) same field names (DTO can has only subset) due to @QuerydslPredicate is builded for Task.class, while api request is made for TaskDto.class
     // 3) bindings = .. is needed only for @ActiveProfile eq. "springJdbc" and "springJpa" where Repository bean is custom, so does not support bind with repository itself
-    public Page<Task> findAll(@QuerydslPredicate(root = Task.class) Predicate predicate, Pageable pageable, Authentication authentication) {
+    public Page<Task> findAll(@QuerydslPredicate(root = Task.class, bindings = TaskRepository.class) Predicate predicate, Pageable pageable, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return readMapper.pageableEntityToDto(service.findAll(predicate, pageable, userDetails));
     }

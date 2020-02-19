@@ -5,6 +5,7 @@ import com.lig.libby.controller.adapter.adminui.mapper.save.BookUiApiSaveMapper;
 import com.lig.libby.controller.core.uiadapter.GenricUIApiController;
 import com.lig.libby.domain.Authority;
 import com.lig.libby.domain.Book;
+import com.lig.libby.repository.BookRepository;
 import com.lig.libby.service.BookService;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ class BookController implements GenricUIApiController<Book, String> {
     // 1) same field names (DTO can has only subset) due to @QuerydslPredicate is builded for Book.class, while api request is made for BookDto.class
     // 2) Pagination for is not broken during Mapper work (e.g no filtering in mapping process used) due to pageable usage
     // 3) bindings = ... is needed only for @ActiveProfile eq. "springJdbc" and "springJpa" where Repository bean is custom, so does not support bind with repository itself
-    public Page<Book> findAll(@QuerydslPredicate(root = Book.class) Predicate predicate, Pageable pageable, Authentication authentication) {
+    public Page<Book> findAll(@QuerydslPredicate(root = Book.class, bindings = BookRepository.class) Predicate predicate, Pageable pageable, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return readMapper.pageableEntityToDto(service.findAll(predicate, pageable, userDetails));
     }
