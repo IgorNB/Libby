@@ -112,6 +112,7 @@ const TaskEdit =({ translate, classes, ...props }) =>  (
                 <AutocompleteInput optionText="name" />
             </ReferenceInput>
             <DisabledInput source="createdBy.name" label="resources.tasks.fields.createdBy.name"/>
+            <DisabledInput source="points" label="resources.tasks.fields.points"/>
 
             <Grid container direction="row" spacing={32} >
                 <Grid item xs={12}>

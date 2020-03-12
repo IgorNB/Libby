@@ -1,0 +1,312 @@
+databaseChangeLog:
+- changeSet:
+    id: 1558296453251-1
+    author: iborisenko (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: 0
+            name: version
+            type: INT
+        - column:
+            name: created_date
+            type: BIGINT
+        - column:
+            name: updated_date
+            type: BIGINT
+        - column:
+            name: points
+            type: DECIMAL(19, 2)
+        - column:
+            name: created_by_user_id
+            type: VARCHAR(255)
+        - column:
+            name: last_upd_by_user_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: loy_member_id
+            type: VARCHAR(255)
+        - column:
+            name: task_id
+            type: VARCHAR(255)
+        tableName: loy_txn
+- changeSet:
+    id: 1558296453251-2
+    author: iborisenko (generated)
+    changes:
+    - addPrimaryKey:
+        columnNames: id
+        constraintName: loy_txnPK
+        tableName: loy_txn
+- changeSet:
+    id: 1558296453251-3
+    author: iborisenko (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: task_id
+        constraintName: UKr74xy6owxk7col3ljscrspr0d
+        tableName: loy_txn
+- changeSet:
+    id: 1558296453251-4
+    author: iborisenko (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: loy_member_id
+        indexName: IDX7eneonshksr7g6wbfxhlml8hp
+        tableName: loy_txn
+- changeSet:
+    id: 1558296453251-5
+    author: iborisenko (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: loy_member_id
+        baseTableName: loy_txn
+        constraintName: FKd1l09ucx0j1m9iqcv09w84p2g
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+- changeSet:
+    id: 1558296453251-6
+    author: iborisenko (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: last_upd_by_user_id
+        baseTableName: loy_txn
+        constraintName: FKiykhpsgbsadicxmc4rofuvu4n
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+- changeSet:
+    id: 1558296453251-7
+    author: iborisenko (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: task_id
+        baseTableName: loy_txn
+        constraintName: FKmwkcqqmsi0v0atli9srdxl9oj
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: task
+- changeSet:
+    id: 1558296453251-8
+    author: iborisenko (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: created_by_user_id
+        baseTableName: loy_txn
+        constraintName: FKpfsbbcspv9gr9mucwclx4yi0q
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+- changeSet:
+    id: 1558296453251-9
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDX1a9ac2fhbds8iu01p3u0qryqr
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_original_publication_year
+        indexName: IDX1a9ac2fhbds8iu01p3u0qryqr
+        tableName: task
+- changeSet:
+    id: 1558296453251-10
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDX7efrsjvmkh4g4hl42d148jbiq
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: original_publication_year
+        indexName: IDX7efrsjvmkh4g4hl42d148jbiq
+        tableName: book
+- changeSet:
+    id: 1558296453251-11
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDX7lnbjn4olq502sa2djtbtiau7
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_name
+        indexName: IDX7lnbjn4olq502sa2djtbtiau7
+        tableName: task
+- changeSet:
+    id: 1558296453251-12
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDX9djweysaamabb5g36fklcvwsd
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_isbn13
+        indexName: IDX9djweysaamabb5g36fklcvwsd
+        tableName: task
+- changeSet:
+    id: 1558296453251-13
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDX9pk3ohrfah1yyfy52tllkct3v
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: authors
+        indexName: IDX9pk3ohrfah1yyfy52tllkct3v
+        tableName: book
+- changeSet:
+    id: 1558296453251-14
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXae80dqity6427ti0gkyfmw5w2
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_authors
+        indexName: IDXae80dqity6427ti0gkyfmw5w2
+        tableName: task
+- changeSet:
+    id: 1558296453251-15
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXdjx0bsw5qtlpa3ertiyf8j0bc
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: isbn13
+        indexName: IDXdjx0bsw5qtlpa3ertiyf8j0bc
+        tableName: book
+- changeSet:
+    id: 1558296453251-16
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXehpdfjpu1jm3hijhj4mm0hx9h
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: isbn
+        indexName: IDXehpdfjpu1jm3hijhj4mm0hx9h
+        tableName: book
+- changeSet:
+    id: 1558296453251-17
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXg0286ag1dlt4473st1ugemd0m
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: title
+        indexName: IDXg0286ag1dlt4473st1ugemd0m
+        tableName: book
+- changeSet:
+    id: 1558296453251-18
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXgrelnv452li3iqw1fiu0pobbs
+        tableName: lang
+    - createIndex:
+        columns:
+        - column:
+            name: code
+        indexName: IDXgrelnv452li3iqw1fiu0pobbs
+        tableName: lang
+- changeSet:
+    id: 1558296453251-19
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXom7yrib5451am88usrq3sfw9b
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_title
+        indexName: IDXom7yrib5451am88usrq3sfw9b
+        tableName: task
+- changeSet:
+    id: 1558296453251-20
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXr0cu4q1ovo6xdc4dcy15k4x66
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: original_title
+        indexName: IDXr0cu4q1ovo6xdc4dcy15k4x66
+        tableName: book
+- changeSet:
+    id: 1558296453251-21
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXs0r6lajwhb599g5s1cjtmwqq6
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_isbn
+        indexName: IDXs0r6lajwhb599g5s1cjtmwqq6
+        tableName: task
+- changeSet:
+    id: 1558296453251-22
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXshw9v7g304jesuup44sow2jgm
+        tableName: task
+    - createIndex:
+        columns:
+        - column:
+            name: book_original_title
+        indexName: IDXshw9v7g304jesuup44sow2jgm
+        tableName: task
+- changeSet:
+    id: 1558296453251-23
+    author: iborisenko (generated)
+    changes:
+    - dropIndex:
+        indexName: IDXwugryet8mf6oi28n00x2eoc4
+        tableName: book
+    - createIndex:
+        columns:
+        - column:
+            name: name
+        indexName: IDXwugryet8mf6oi28n00x2eoc4
+        tableName: book
+

@@ -27,6 +27,7 @@ export const tasks = {
     fields: {
         "id": "id",
         "version": "version",
+        "points": "loyalty points",
         "book": {
             "id": "book id",
             "version": "book version",
