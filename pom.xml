@@ -78,7 +78,7 @@
         <io.jsonwebtoken>0.5.1</io.jsonwebtoken>
 
         <!--test dependencies-->
-        <com.google.code.gson>2.8.2</com.google.code.gson>
+        <com.google.code.gson>2.8.9</com.google.code.gson>
         <com.tngtech.archunit>0.10.2</com.tngtech.archunit>
         <archunit-junit5-api>0.10.2</archunit-junit5-api>
         <archunit-junit5-engine>0.10.2</archunit-junit5-engine>
