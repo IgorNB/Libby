@@ -53,11 +53,14 @@ spring:
     driver-class-name: "org.h2.Driver"
   profiles:
     active:
-      - "springDataJpa"
+      - "springJdbc"
       - "shellDisabled"
 ---
 spring:
   profiles: "springDataJpa"
+---
+spring:
+  profiles: "springJdbc"
 ---
 spring:
   profiles: "springBatch"
