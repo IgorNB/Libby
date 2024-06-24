@@ -1,7 +1,9 @@
 package com.lig.libby.service;
 
 import com.lig.libby.domain.Lang;
+import com.lig.libby.domain.QLang;
 import com.lig.libby.repository.LangRepository;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import lombok.NonNull;
 import net.jcip.annotations.ThreadSafe;
@@ -28,19 +30,22 @@ public class LangServiceImpl implements LangService {
 
     @Override
     public @NonNull Page<Lang> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails) {
+        if (predicate == null) {
+            predicate = new BooleanBuilder().and(QLang.lang.id.isNotNull());
+        }
         return langRepository.findAll(predicate, pageable);
     }
 
     @NonNull
     @Override
     public Lang update(@NonNull Lang entity, @NonNull UserDetails userDetails) {
-        return langRepository.save(entity);
+        return langRepository.saveAndFind(entity);
     }
 
     @NonNull
     @Override
     public Lang create(@NonNull Lang entity, @NonNull UserDetails userDetails) {
-        return langRepository.save(entity);
+        return langRepository.saveAndFind(entity);
     }
 
     @Override

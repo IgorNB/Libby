@@ -15,16 +15,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 
 @ThreadSafe
 @Service
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final BookRepository bookRepository;
-    private final EntityManager entityManager;
+
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -32,10 +30,9 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Autowired
-    public TaskServiceImpl(@NonNull TaskRepository taskRepository, @NonNull BookRepository bookRepository, EntityManager entityManager) {
+    public TaskServiceImpl(@NonNull TaskRepository taskRepository, @NonNull BookRepository bookRepository) {
         this.taskRepository = taskRepository;
         this.bookRepository = bookRepository;
-        this.entityManager = entityManager;
     }
 
     private void setAvailableCommands(Task entity, @NonNull UserDetails userDetails) {
@@ -51,7 +48,10 @@ public class TaskServiceImpl implements TaskService {
             if (currentEntity.getWorkflowStep() != null && currentEntity.getWorkflowStep().nextStatesString(userDetails).contains(entity.getCommand())) {
                 entity.setWorkflowStep(Task.WorkflowStepEnum.valueOf(command));
                 if (Task.WorkflowStepEnum.APPROVED.name().equals(command)) {
-                    entity.setAssignee(entityManager.getReference(User.class, currentEntity.getCreatedBy().getId()));
+                    User user = new User();
+                    user.setId(userDetails.getUsername());
+
+                    entity.setAssignee(user);
 
                     Book approvedBook = new Book();
                     approvedBook.setLang(entity.getBookLang());
@@ -70,20 +70,22 @@ public class TaskServiceImpl implements TaskService {
                         approvedBookWork = entity.getBookWork();
                     } else {
                         approvedBookWork = new Work();
-                        workRepository.saveAndFlush(approvedBookWork);
+                        workRepository.saveAndFind(approvedBookWork);
                     }
                     approvedBook.setWork(approvedBookWork);
-                    bookRepository.save(approvedBook);
+                    bookRepository.saveAndFind(approvedBook);
 
                     approvedBookWork.setBestBook(approvedBook);
-                    workRepository.saveAndFlush(approvedBookWork);
+                    workRepository.saveAndFind(approvedBookWork);
 
                     entity.setBook(approvedBook);
                 } else if (Task.WorkflowStepEnum.SUBMITTED.name().equals(command)) {
                     User admin = userRepository.findFirstWithAdminAuthority();
                     entity.setAssignee(admin);
                 } else if (Task.WorkflowStepEnum.ESCALATED.name().equals(command)) {
-                    entity.setAssignee(entityManager.getReference(User.class, currentEntity.getCreatedBy().getId()));
+                    User user = new User();
+                    user.setId(currentEntity.getCreatedBy().getId());
+                    entity.setAssignee(user);
                 }
             }
         }
@@ -98,6 +100,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public @NonNull Page<Task> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails) {
+        if (predicate == null) {
+            predicate = new BooleanBuilder().and(QTask.task.id.isNotNull());
+        }
+
         BooleanBuilder where = new BooleanBuilder();
 
         if (userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).anyMatch(a -> a.equals(Authority.Roles.ADMIN))) {
@@ -112,7 +118,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Transactional
+
     public @NonNull Task update(@NonNull Task entity, @NonNull UserDetails userDetails) {
         Task currentEntity = this.findById(entity.getId(), userDetails);
         if (userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).noneMatch(a -> a.equals(Authority.Roles.ADMIN))
@@ -123,17 +129,18 @@ public class TaskServiceImpl implements TaskService {
             throw new RuntimeException("Заявка уже одобрена - редактирование не доступно");
         }
         processCommand(entity, userDetails);
-        taskRepository.saveAndFlush(entity);
+        taskRepository.saveAndFind(entity);
         return this.findById(entity.getId(), userDetails);
     }
 
     @Override
-    @Transactional
+
     public @NonNull Task create(@NonNull Task entity, @NonNull UserDetails userDetails) {
-        User user = entityManager.getReference(User.class, userDetails.getUsername());
+        User user = new User();
+        user.setId(userDetails.getUsername());
         entity.setAssignee(user);
         entity.setWorkflowStep(Task.WorkflowStepEnum.INIT);
-        taskRepository.saveAndFlush(entity);
+        taskRepository.saveAndFind(entity);
         return this.findById(entity.getId(), userDetails);
     }
 

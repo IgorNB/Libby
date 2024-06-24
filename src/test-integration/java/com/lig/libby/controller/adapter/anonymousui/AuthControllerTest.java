@@ -30,7 +30,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -93,7 +92,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @Transactional
+
     public void testAuthorize() throws Exception {
         User user = new User();
         user.setName("user-jwt-controller");
@@ -105,7 +104,7 @@ public class AuthControllerTest {
         Authority authority = authorityRepository.findAll(where).iterator().next();
         user.setAuthorities(new HashSet<>(Arrays.asList(authority)));
 
-        userRepository.saveAndFlush(user);
+        userRepository.saveAndFind(user);
 
         LoginRequestDto login = new LoginRequestDto();
         login.setEmail("user-jwt-controller@example.com");

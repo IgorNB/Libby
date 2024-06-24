@@ -6,11 +6,13 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
 import net.jcip.annotations.NotThreadSafe;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+@Document
 @NotThreadSafe
 @Entity
 @Table(name = RatingMigration.TABLE)

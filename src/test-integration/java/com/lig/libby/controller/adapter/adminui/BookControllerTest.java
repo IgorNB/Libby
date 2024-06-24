@@ -22,12 +22,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
@@ -45,6 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {"spring.batch.job.enabled=false"})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = {Main.class})
+
 public class BookControllerTest {
 
     @Autowired
@@ -84,7 +85,7 @@ public class BookControllerTest {
     }
 
     @Test
-    @Transactional
+
     public void findOneTest() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
         Lang lang = TestUtil.createAndSaveLang(langRepository);
@@ -122,8 +123,8 @@ public class BookControllerTest {
     }
 
 
-    @Transactional
     @TestFactory
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     Stream<DynamicTest> dynamicFindAllTest() {
         List<TestArgs<User, String, String, List<Book>, String, String, String>> inputList;
         {
@@ -184,7 +185,6 @@ public class BookControllerTest {
 
 
     @Test
-    @Transactional
     void create() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
         Lang lang = TestUtil.createAndSaveLang(langRepository);
@@ -228,7 +228,6 @@ public class BookControllerTest {
     }
 
     @Test
-    @Transactional
     void update() throws Exception {
 
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
@@ -255,7 +254,6 @@ public class BookControllerTest {
 
 
     @Test
-    @Transactional
     void delete() throws Exception {
         User user = TestUtil.createAndSaveUserWithUserRole(passwordEncoder, authorityRepository, userRepository);
         Lang lang = TestUtil.createAndSaveLang(langRepository);

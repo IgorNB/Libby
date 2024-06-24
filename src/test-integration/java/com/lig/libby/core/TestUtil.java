@@ -47,7 +47,7 @@ public final class TestUtil {
         comment.setRating(Math.toIntExact(Math.round(Math.random() * 5)));
         comment.setBody("test-comment-body" + UUID.randomUUID().toString().replaceAll("-", ""));
 
-        comment = commentRepository.saveAndFlush(comment);
+        comment = commentRepository.saveAndFind(comment);
         return comment;
     }
 
@@ -62,7 +62,7 @@ public final class TestUtil {
         task.setBookTitle("test-title-name" + UUID.randomUUID().toString().replaceAll("-", ""));
         task.setWorkflowStep(Task.WorkflowStepEnum.INIT);
         task.setAssignee(user);
-        task = taskRepository.saveAndFlush(task);
+        task = taskRepository.saveAndFind(task);
         return task;
     }
 
@@ -74,7 +74,7 @@ public final class TestUtil {
         book.setLang(lang);
         book.setWork(work);
         book.setTitle("test-title-name" + UUID.randomUUID().toString().replaceAll("-", ""));
-        book = bookRepository.saveAndFlush(book);
+        book = bookRepository.saveAndFind(book);
         return book;
     }
 
@@ -83,7 +83,7 @@ public final class TestUtil {
         String langName = "test-lang-name" + UUID.randomUUID().toString().replaceAll("-", "");
         Lang langNew = new Lang();
         langNew.setCode(langName);
-        return langRepository.saveAndFlush(langNew);
+        return langRepository.saveAndFind(langNew);
     }
 
     @NotNull
@@ -98,7 +98,7 @@ public final class TestUtil {
         Authority authority = authorityRepository.findAll(where).iterator().next();
         user.setAuthorities(new HashSet<>(Arrays.asList(authority)));
 
-        return  userRepository.saveAndFlush(user);
+        return userRepository.saveAndFind(user);
     }
 
     @NotNull
@@ -113,12 +113,12 @@ public final class TestUtil {
         Authority authority = authorityRepository.findAll(where).iterator().next();
         user.setAuthorities(new HashSet<>(Arrays.asList(authority)));
 
-        return userRepository.saveAndFlush(user);
+        return userRepository.saveAndFind(user);
     }
 
     @NotNull
     public static Work createAndSaveWork(WorkRepository workRepository) {
-        return workRepository.saveAndFlush(new Work());
+        return workRepository.saveAndFind(new Work());
     }
 
     public static void setAuthenticationForCurrentThreadLocal(AuthenticationManager authenticationManager, String login, String password) {

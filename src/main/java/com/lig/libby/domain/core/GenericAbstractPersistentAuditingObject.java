@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import javax.persistence.*;
 
@@ -28,6 +29,7 @@ public abstract class GenericAbstractPersistentAuditingObject<U extends Persiste
     public static final String LAST_UPD_BY_COLUMN = "LAST_UPD_BY_USER_ID";
     public static final String UPDATED_DATE_COLUMN = "updated_date";
 
+    @DBRef
     @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = CREATED_BY_COLUMN, updatable = false)
@@ -42,6 +44,7 @@ public abstract class GenericAbstractPersistentAuditingObject<U extends Persiste
     private Long createdDate/* = Instant.now().toEpochMilli()*/;
 
 
+    @DBRef
     @LastModifiedBy
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = LAST_UPD_BY_COLUMN)

@@ -1,7 +1,9 @@
 package com.lig.libby.service;
 
 import com.lig.libby.domain.Comment;
+import com.lig.libby.domain.QComment;
 import com.lig.libby.repository.CommentRepository;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import lombok.NonNull;
 import net.jcip.annotations.ThreadSafe;
@@ -28,19 +30,22 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public @NonNull Page<Comment> findAll(Predicate predicate, Pageable pageable, @NonNull UserDetails userDetails) {
+        if (predicate == null) {
+            predicate = new BooleanBuilder().and(QComment.comment.id.isNotNull());
+        }
         return commentRepository.findAll(predicate, pageable);
     }
 
     @NonNull
     @Override
     public Comment update(@NonNull Comment entity, @NonNull UserDetails userDetails) {
-        return commentRepository.save(entity);
+        return commentRepository.saveAndFind(entity);
     }
 
     @NonNull
     @Override
     public Comment create(@NonNull Comment entity, @NonNull UserDetails userDetails) {
-        return commentRepository.save(entity);
+        return commentRepository.saveAndFind(entity);
     }
 
     @Override

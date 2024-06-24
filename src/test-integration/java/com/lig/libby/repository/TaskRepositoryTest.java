@@ -2,8 +2,8 @@ package com.lig.libby.repository;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lig.libby.Main;
 import com.lig.libby.domain.*;
-import com.lig.libby.repository.common.DataJpaAuditConfig;
 import com.lig.libby.repository.common.EntityFactory;
 import com.querydsl.core.BooleanBuilder;
 import lombok.NonNull;
@@ -12,58 +12,50 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.jpa.repository.support.QuerydslJpaRepository;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.repository.support.QuerydslMongoPredicateExecutor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 @TestPropertySource(properties = {"spring.batch.job.enabled=false"})
 @ExtendWith(SpringExtension.class)
-@DataJpaTest(includeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = {DataJpaAuditConfig.class}))
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = {Main.class})
 @ActiveProfiles({"shellDisabled", "springDataJpa", "TaskRepositoryTest"})
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class TaskRepositoryTest {
 
+    public final MongoOperations mongoOperations;
 
     public static final String OPERATION_NOT_SUPPORTED = "Operation not supported";
     public final TaskRepository repository;
-    private final TestEntityManager em;
-    private final EntityManager entityManager;
     private final EntityFactory<Task> entityFactoryTask;
 
     @Autowired
-    public TaskRepositoryTest(@NonNull TaskRepository repository, @NonNull TestEntityManager em, @NonNull EntityFactory<Task> entityFactoryTask, @NonNull EntityManager entityManager) {
+    public TaskRepositoryTest(@NonNull MongoOperations mongoOperations, @NonNull TaskRepository repository, @NonNull EntityFactory<Task> entityFactoryTask) {
+        this.mongoOperations = mongoOperations;
         this.repository = repository;
-        this.em = em;
         this.entityFactoryTask = entityFactoryTask;
-        this.entityManager = entityManager;
     }
 
     @Test
     public void testRepositoryInterfaceImplementationAutowiring() {
-        assertThat(repository instanceof QuerydslJpaRepository
-                || AopUtils.getTargetClass(repository).equals(QuerydslJpaRepository.class)
+        assertThat(repository instanceof QuerydslMongoPredicateExecutor
+                || AopUtils.getTargetClass(repository).equals(QuerydslMongoPredicateExecutor.class)
+                || repository.toString().contains(QuerydslMongoPredicateExecutor.class.getName())
         ).isTrue();
     }
 
     @Test
-    @Transactional
+
     public void saveAndQueryTest() {
         final Task entity = entityFactoryTask.getNewEntityInstance();
         String id = entity.getId();
@@ -71,7 +63,7 @@ class TaskRepositoryTest {
 
         final Task deepEntityCopy = (Task) SerializationUtils.clone(entity);
 
-        final Task entitySaved = repository.saveAndFlush(entity);
+        final Task entitySaved = repository.saveAndFind(entity);
         final Task entityQueried = repository.findById(id).orElse(null);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -91,13 +83,13 @@ class TaskRepositoryTest {
     }
 
     @Test
-    @Transactional
+
     public void updateAndQueryTest() {
-        final Task entitySaved = repository.saveAndFlush(entityFactoryTask.getNewEntityInstance());
+        final Task entitySaved = repository.saveAndFind(entityFactoryTask.getNewEntityInstance());
         final Task deepEntitySavedCopy = (Task) SerializationUtils.clone(entitySaved);
         entitySaved.setBookTitle("test-update-title");
 
-        final Task entityUpdated = repository.saveAndFlush(entitySaved);
+        final Task entityUpdated = repository.saveAndFind(entitySaved);
 
         deepEntitySavedCopy.setBookTitle(entitySaved.getBookTitle());
         deepEntitySavedCopy.setVersion(deepEntitySavedCopy.getVersion() + 1);
@@ -115,14 +107,14 @@ class TaskRepositoryTest {
     }
 
     @Test
-    @Transactional
+
     public void findWithPredicateTest() {
-        final Task entitySaved1 = repository.saveAndFlush(entityFactoryTask.getNewEntityInstance());
+        final Task entitySaved1 = repository.saveAndFind(entityFactoryTask.getNewEntityInstance());
 
         Task task2 = entityFactoryTask.getNewEntityInstance();
         task2.setBookTitle("test-title-findWithPredicateTest");
 
-        final Task entitySaved2 = repository.saveAndFlush(task2);
+        final Task entitySaved2 = repository.saveAndFind(task2);
 
         BooleanBuilder where = new BooleanBuilder();
         where.and(QTask.task.bookTitle.eq(task2.getBookTitle()));
@@ -146,23 +138,28 @@ class TaskRepositoryTest {
 
 
         @Bean
-        public EntityFactory<Task> getNewEntityInstance(TestEntityManager em) {
+        public EntityFactory<Task> getNewEntityInstance(MongoOperations em) {
             return new EntityFactory<Task>() {
                 @Override
-                @Transactional(propagation = Propagation.REQUIRES_NEW)
+
                 public Task getNewEntityInstance() {
                     String userName = "test-user-name" + UUID.randomUUID().toString().replaceAll("-", "");
                     User userNew = new User();
                     userNew.setName(userName);
                     userNew.setEmail(userName + "@libby.com");
                     userNew.setProvider(Authority.AuthProvider.local);
-                    final User user = em.persistFlushFind(userNew);
+                    em.save(userNew);
+                    final User user = em.findById(userNew.getId(), User.class);
 
                     String langName = "test-lang-name" + UUID.randomUUID().toString().replaceAll("-", "");
                     Lang langNew = new Lang();
                     langNew.setCode(langName);
-                    final Lang lang = em.persistFlushFind(langNew);
-                    final Work work = em.persistFlushFind(new Work());
+                    em.save(langNew);
+                    final Lang lang = em.findById(langNew.getId(), Lang.class);
+
+                    Work workNew = new Work();
+                    em.save(workNew);
+                    final Work work = em.findById(workNew.getId(), Work.class);
                     String taskName = "test-task-name" + UUID.randomUUID().toString().replaceAll("-", "");
                     Task task = new Task();
                     task.setBookName(taskName);
